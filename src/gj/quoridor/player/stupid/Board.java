@@ -24,12 +24,12 @@ public class Board {
 	 * Move action code.
 	 */
 	public static final int MOVE = 0;
-	
+
 	/**
 	 * Put wall action code.
 	 */
 	public static final int PUT_WALL = 1;
-	
+
 	/**
 	 * Move forward code.
 	 */
@@ -76,7 +76,7 @@ public class Board {
 	 */
 	public void play(int player, int action, int coords) {
 		if (action == MOVE) {
-			move(player, coords);
+			performMove(player, coords);
 		} else if (action == PUT_WALL) {
 			putWall(player, coords);
 		} else {
@@ -88,39 +88,45 @@ public class Board {
 		throw new UnsupportedOperationException("Not implemented yet!");
 	}
 
-	private void move(int player, int direction) {
+	private void performMove(int player, int direction) {
+		// simulate move
+		int[] nextCoords = computeMoveCoords(player, direction);
+		
+		// check if coordinates are correct
+		if (!checkCoords(nextCoords)) {
+			throw new BadMoveException(player, nextCoords);
+		}
+		
+		// apply move
+		playerCoords[player] = nextCoords;
+	}
+	
+	public int[] computeMoveCoords(int player, int direction) {
 		// simple bias to adjust coordinates increasing or decreasing operations
 		int bias = (player == RED) ? 1 : -1;
-
-		// Simulate moves in new array
+		// simulate moves in new array
 		int coords[] = new int[2];
 		System.arraycopy(playerCoords[player], 0, coords, 0, 2);
 
-		// Check directions
+		// check directions
 		switch (direction) {
-			case FORWARD:
-				coords[1] += bias;
-				break;
-			case BACK:
-				coords[1] -= bias;
-				break;
-			case LEFT:
-				coords[0] += bias;
-				break;
-			case RIGHT:
-				coords[0] -= bias;
-				break;
-			default:
-				throw new RuntimeException("Directions must be in range [0,3], you have passed direction=" + direction);
+		case FORWARD:
+			coords[1] += bias;
+			break;
+		case BACK:
+			coords[1] -= bias;
+			break;
+		case LEFT:
+			coords[0] += bias;
+			break;
+		case RIGHT:
+			coords[0] -= bias;
+			break;
+		default:
+			throw new RuntimeException("Directions must be in range [0,3], you have passed direction=" + direction);
 		}
 
-		// Check if move is correct
-		if (!checkCoords(coords)) {
-			throw new BadMoveException(player, coords);
-		}
-
-		// Apply simulation to real coordinates
-		System.arraycopy(coords, 0, playerCoords[player], 0, 2);
+		return coords;
 	}
 
 	/**

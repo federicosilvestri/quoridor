@@ -1,11 +1,16 @@
 package main;
 
-import gj.quoridor.engine.Quoridor;
+import gj.quoridor.player.stupid.Board;
+import gj.quoridor.player.stupid.ExhaustiveResearch;
 
 public class Main {
 	
 	public static void main(String args[]) {
-		// Usage <player1>, <player2>, <gameNumber>, <verbose>
-		Quoridor.main(new String[] {"1", "Silvestri", "Stupid", "true"});
+		Board board = new Board();
+		
+		
+		
+		
+		
 	}
 }

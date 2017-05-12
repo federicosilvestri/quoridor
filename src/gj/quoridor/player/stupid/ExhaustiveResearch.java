@@ -4,21 +4,46 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class ExhaustiveResearch {
+	/**
+	 * Is read or blue boolean.
+	 */
+	private final int player;
 
 	/**
-	 * x and y of the initial state.
+	 * Board object.
 	 */
-	private final int[] coords;
-	private final boolean isRed;
+	private final Board board;
 
-	public ExhaustiveResearch(int player, int[] coords) {
-		isRed = (player == Board.RED);
-		this.coords = coords;
+	/**
+	 * Create a new exhaustive search object.
+	 * 
+	 * @param player
+	 * @param board
+	 */
+	public ExhaustiveResearch(int player, Board board) {
+		this.player = player;
+		this.board = board;
 
 	}
 
-	public List<Integer[]> getActions() {
-		List<Integer[]> actions = new ArrayList();
+	/**
+	 * Get all possible actions.
+	 * 
+	 * @return List of actions
+	 * @TODO: implement walls
+	 */
+	public List<int[]> getActions() {
+		List<int[]> actions = new ArrayList<>();
+
+		// move actions
+		for (int move : computeMoves()) {
+			actions.add(new int[] { Board.MOVE, move });
+		}
+
+		// put-wall action
+		//for (int wallIndex : computeWalls()) {
+			//actions.add(new int[] { Board.PUT_WALL, wallIndex });
+		//}
 
 		return actions;
 	}
@@ -27,55 +52,30 @@ public class ExhaustiveResearch {
 	 * Finds out all possible coordinates movements from a starting point.
 	 * 
 	 * 
-	 * @return a List of integer vectors with all possible reacheable coordinates.
+	 * @return a List of integer vectors with all possible reachable.
+	 *         coordinates.
 	 */
-	private List<Integer> calculateCoordinates() {
-		List<Integer> moves = new ArrayList();
-		moves.add(0); //We only use movement action.
-		if(coords[0] == 0 && coords[1] == 0){ //posizione (0,0) angolo in alto a sinistra
-			moves.add(coords[0]++); 
-			moves.add(coords[1]++); 
-		}else if(coords[0] == 8 && coords[1] == 0){ //posizione (8,0) angolo in alto a destra
-			moves.add(coords[0]--);
-			moves.add(coords[1]++);	
-		}else if(coords[0] == 0 && coords[1] == 8){ //posizione (0,8) angolo in basso a sinistra
-			moves.add(coords[0]++);
-			moves.add(coords[1]--);
-		}else if(coords[0] == 8 && coords[1] == 8){ //posizione (8,8) angolo in basso a destra
-	    	moves.add(coords[0]--);
-	    	moves.add(coords[1]--);
-		}else if(coords[0] == 0){ //caso in cui x = 0, quindi la pedina si trova sul confine sinistro
-			moves.add(coords[0]++);
-			moves.add(coords[1]++);
-			moves.add(coords[1]--);
-		}else if(coords[0] == 8){ //caso in cui x = 8, quindi la pedina si trova sul confine destro
-			moves.add(coords[0]--);
-			moves.add(coords[1]++);
-			moves.add(coords[1]--);
-		}else if(coords[1] == 0){ //caso in cui y = 0, quindi la pedina si trova sul confine anteriore
-			moves.add(coords[0]++);
-			moves.add(coords[0]--);
-			moves.add(coords[1]++);
-		}else if(coords[1] == 8){ //caso in cui y = 8, quindi la pedina si trova sul confine posteriore
-			moves.add(coords[0]++);
-			moves.add(coords[0]--);
-			moves.add(coords[1]--);
-		}else{ //tutti gli altri casi, i movimenti non sono vincolati in nessuna direzione
-			moves.add(coords[0]++);
-			moves.add(coords[1]++);
-			moves.add(coords[0]--);
-			moves.add(coords[1]--);
+	private List<Integer> computeMoves() {
+		List<Integer> moves = new ArrayList<>();
 
+		// create all 4 moves
+		int testMoves[] = new int[] { Board.FORWARD, Board.BACK, Board.LEFT, Board.RIGHT };
+
+		// check 4 moves
+		for (int move : testMoves) {
+			// get coordinates produced by this move
+			int coords[] = board.computeMoveCoords(player, move);
+
+			// check if coordinates of player are valid
+			if (board.checkCoords(coords)) {
+				moves.add(move);
+			}
 		}
+
 		return moves;
 	}
 
-	/**
-	 * Ritorna tutte le possibili coordinate dei muri da mettere.
-	 * 
-	 * @return
-	 */
-	private List<Integer> calculateWalls() {
+	private List<Integer> computeWalls() {
 		return null;
 	}
 
