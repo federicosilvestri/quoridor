@@ -23,7 +23,6 @@ public class StupidPlayer implements Player {
 	@Override
 	public void tellMove(int[] arg0) {
 		System.out.println(Arrays.toString(arg0));
-
 	}
 
 }
