@@ -93,8 +93,19 @@ public class BoardMatrix {
 		return true;
 	}
 	
+	public boolean wallIsVertical(int index) {
+		boolean result = false;
+		
+		for (int i = 0; i <= 7 && !result; i++) {
+			if (index >= (16 * i) && index <= (16 * i + 7)) {  
+				result = true;
+			}
+		}
+		
+		return result;
+	}
+	
 	public void putWall(int index, int player) {
-		// Qui va messo sto cazzo di wall
 	}
 
 	@Override
