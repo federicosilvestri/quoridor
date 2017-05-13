@@ -34,7 +34,7 @@ public class CoordinatesConverter {
 	 *            coordinates.
 	 * @return moves code.
 	 */
-	public int convert(int currentCoords[], int nextCoords[]) {
+	public int moveConvert(int currentCoords[], int nextCoords[]) {
 		if (!checkDistance(currentCoords, nextCoords)) {
 			throw new CoordinatesConvertException(currentCoords, nextCoords);
 		}

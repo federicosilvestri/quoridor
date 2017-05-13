@@ -39,14 +39,14 @@ public class CoordinatesConverterTest {
 
 			boolean result = false;
 			try {
-				cvBlue.convert(current, next);
+				cvBlue.moveConvert(current, next);
 			} catch (CoordinatesConvertException ex) {
 				result = true;
 			}
 
 			boolean result2 = false;
 			try {
-				cvBlue.convert(current, next2);
+				cvBlue.moveConvert(current, next2);
 			} catch (CoordinatesConvertException ex) {
 				result2 = true;
 			}
@@ -103,7 +103,7 @@ public class CoordinatesConverterTest {
 				int current[] = new int[] { i, j };
 				int next[] = new int[] { i, j + 2 };
 
-				int move = cv.convert(current, next);
+				int move = cv.moveConvert(current, next);
 				assertEquals(move, expectedDirection);
 			}
 		}
@@ -115,7 +115,7 @@ public class CoordinatesConverterTest {
 				int current[] = new int[] { i, j };
 				int next[] = new int[] { i, j - 2 };
 
-				int move = cv.convert(current, next);
+				int move = cv.moveConvert(current, next);
 				assertEquals(move, expectedDirection);
 			}
 		}
@@ -127,7 +127,7 @@ public class CoordinatesConverterTest {
 				int current[] = new int[] { j, i };
 				int next[] = new int[] { j - 2, i };
 
-				int move = cv.convert(current, next);
+				int move = cv.moveConvert(current, next);
 				assertEquals(move, expectedDirection);
 			}
 		}
@@ -139,7 +139,7 @@ public class CoordinatesConverterTest {
 				int current[] = new int[] { j, i };
 				int next[] = new int[] { j + 2, i };
 
-				int move = cv.convert(current, next);
+				int move = cv.moveConvert(current, next);
 				assertEquals(move, expectedDirection);
 			}
 		}

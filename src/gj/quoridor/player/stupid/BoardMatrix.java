@@ -3,6 +3,8 @@ package gj.quoridor.player.stupid;
 import java.util.ArrayList;
 import java.util.List;
 
+import gj.quoridor.player.stupid.exceptions.BadMoveException;
+
 public class BoardMatrix {
 
 	/**
@@ -89,6 +91,10 @@ public class BoardMatrix {
 		}
 
 		return true;
+	}
+	
+	public void putWall(int index, int player) {
+		// Qui va messo sto cazzo di wall
 	}
 
 	@Override

@@ -106,7 +106,7 @@ public class Board {
 		}
 
 		wallStock[player] -= 1;
-		// disconnect graph
+		
 	}
 
 	private void performMove(int player, int direction) {
