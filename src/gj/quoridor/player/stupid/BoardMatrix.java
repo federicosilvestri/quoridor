@@ -105,7 +105,20 @@ public class BoardMatrix {
 		return result;
 	}
 	
+	public List<int[]> getWallCoords(int index) {
+		List<int[]> coords = new ArrayList<>();
+		
+		if (wallIsVertical(index)) {
+			
+		} else {
+			
+		}
+		
+		return coords;
+	}
+	
 	public void putWall(int index, int player) {
+		
 	}
 
 	@Override
