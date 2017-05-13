@@ -1,6 +1,7 @@
 package gj.quoridor.player.stupid;
 
 import gj.quoridor.player.stupid.exceptions.BadMoveException;
+import gj.quoridor.player.stupid.exceptions.OutOfStockWallException;
 
 /**
  * Board class.
@@ -56,13 +57,27 @@ public class Board {
 	private int[][] playerCoords;
 
 	/**
+	 * Stock of walls
+	 */
+	private final int[] wallStock;
+
+	/**
+	 * Matrix where is located wall and players
+	 */
+	private final BoardMatrix boardMatrix;
+
+	/**
 	 * Create a new Board Object starting from standard initial coordinates.
 	 */
 	public Board() {
 		playerCoords = new int[2][];
-		playerCoords[RED] = new int[] { 4, 0 };
-		playerCoords[BLUE] = new int[] { 4, 8 };
+		playerCoords[RED] = new int[] { 8, 0 };
+		playerCoords[BLUE] = new int[] { 8, 16 };
+		wallStock = new int[] { 10, 10 };
+		boardMatrix = new BoardMatrix(17, 17, playerCoords[RED], playerCoords[BLUE]);
+		System.out.println(boardMatrix);
 	}
+
 
 	/**
 	 * Perform an action.
@@ -84,26 +99,32 @@ public class Board {
 		}
 	}
 
-	private void putWall(int player, int i) {
-		throw new UnsupportedOperationException("Not implemented yet!");
+	private void putWall(int player, int index) {
+		// check if wall is available
+		if (wallStock[player] < 1) {
+			throw new OutOfStockWallException(player, index);
+		}
+
+		wallStock[player] -= 1;
+		// disconnect graph
 	}
 
 	private void performMove(int player, int direction) {
 		// simulate move
 		int[] nextCoords = computeMoveCoords(player, direction);
-		
+
 		// check if coordinates are correct
 		if (!checkCoords(nextCoords)) {
 			throw new BadMoveException(player, nextCoords);
 		}
-		
+
 		// apply move
 		playerCoords[player] = nextCoords;
 	}
-	
+
 	public int[] computeMoveCoords(int player, int direction) {
 		// simple bias to adjust coordinates increasing or decreasing operations
-		int bias = (player == RED) ? 1 : -1;
+		int bias = (player == RED) ? 2 : -2;
 		// simulate moves in new array
 		int coords[] = new int[2];
 		System.arraycopy(playerCoords[player], 0, coords, 0, 2);
@@ -137,14 +158,29 @@ public class Board {
 	 * @return true if correct, false otherwise.
 	 */
 	public boolean checkCoords(int coords[]) {
-		if (coords[0] < 0 || coords[0] > 8) {
+		if (coords[0] < 0 || coords[0] > 16) {
 			return false;
 		}
 
-		if (coords[1] < 0 || coords[1] > 8) {
+		if (coords[1] < 0 || coords[1] > 16) {
 			return false;
 		}
 
+		return true;
+	}
+
+	/**
+	 * Check if move is correct. If move is not correct, for example because
+	 * player has passed a wall, this method returns false.
+	 * 
+	 * @param current
+	 *            coordinates before move
+	 * @param next
+	 *            coordinates after move
+	 * @return true if move is corrected or false is move is not correct
+	 */
+	public boolean checkMove(int current[], int next[]) {
+		// Do not check |x0 -x1| + |y0-y1| = 2, because is forced by system
 		return true;
 	}
 
@@ -177,4 +213,25 @@ public class Board {
 		playerCoords[player] = coords;
 	}
 
+	/**
+	 * Get stock of walls.
+	 * 
+	 * @param player
+	 *            chosen player
+	 * @return integer value between 0 and 10
+	 */
+	public int getWallStock(int player) {
+		return wallStock[player];
+	}
+
+	/**
+	 * Get availability of walls.
+	 * 
+	 * @param player
+	 *            related player
+	 * @return true if walls are available, false otherwise
+	 */
+	public boolean wallAvailable(int player) {
+		return (wallStock[player] > 1);
+	}
 }

@@ -22,12 +22,12 @@ public class BoardTest {
 	public void testRedForward() {
 		System.out.println("Testing RED forward");
 		
-		board.setPlayerCoords(Board.RED, new int[]{4, 0});
-		for (int i = 0; i < 8; i++) {
+		board.setPlayerCoords(Board.RED, new int[]{8, 0});
+		for (int i = 0; i < 16; i += 2) {
 			// forward
 			board.play(Board.RED, Board.MOVE, Board.FORWARD);
 			
-			int expectedCoords[] = {4, i+1};
+			int expectedCoords[] = {8, i+2};
 			int redCoords[] = board.getPlayerCoords(Board.RED);			
 			
 			System.out.print(Arrays.toString(redCoords));
@@ -44,12 +44,12 @@ public class BoardTest {
 	public void testRedBack() {
 		System.out.println("Testing RED back");
 		
-		board.setPlayerCoords(Board.RED, new int[]{4, 8});
-		for (int i = 8; i > 0; i--) {
+		board.setPlayerCoords(Board.RED, new int[]{8, 16});
+		for (int i = 16; i > 0; i -= 2) {
 			// back
 			board.play(Board.RED, Board.MOVE, Board.BACK);
 			
-			int expectedCoords[] = {4, i-1};
+			int expectedCoords[] = {8, i-2};
 			int redCoords[] = board.getPlayerCoords(Board.RED);
 			
 			System.out.print(Arrays.toString(redCoords));
@@ -67,11 +67,11 @@ public class BoardTest {
 		System.out.println("Testing RED left");
 		
 		board.setPlayerCoords(Board.RED, new int[]{0, 0});
-		for (int i = 0; i < 8; i++) {
+		for (int i = 0; i < 16; i += 2) {
 			// go left
 			board.play(Board.RED, Board.MOVE, Board.LEFT);
 			
-			int expectedCoords[] = {i+1, 0};
+			int expectedCoords[] = {i+2, 0};
 			int redCoords[] = board.getPlayerCoords(Board.RED);
 			
 			System.out.print(Arrays.toString(redCoords));
@@ -88,12 +88,12 @@ public class BoardTest {
 	public void testRedRight() {
 		System.out.println("Testing RED right");
 		
-		board.setPlayerCoords(Board.RED, new int[]{8, 0});
-		for (int i = 8; i > 0; i--) {
+		board.setPlayerCoords(Board.RED, new int[]{16, 0});
+		for (int i = 16; i > 0; i -= 2) {
 			// go left
 			board.play(Board.RED, Board.MOVE, Board.RIGHT);
 			
-			int expectedCoords[] = {i-1, 0};
+			int expectedCoords[] = {i-2, 0};
 			int redCoords[] = board.getPlayerCoords(Board.RED);
 			
 			System.out.print(Arrays.toString(redCoords));

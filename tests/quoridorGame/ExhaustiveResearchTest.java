@@ -18,21 +18,20 @@ import gj.quoridor.player.stupid.ExhaustiveResearch;
 @RunWith(Parameterized.class)
 public class ExhaustiveResearchTest {
 
-	@Parameters(name = "(x = {0}, " + "y = {1})")
+	@Parameters(name = "(isRed = {0}, x = {1}, y = {2})")
 	public static Collection<Object[]> data() {
-		Object[][] params = new Object[162][3];
 
-		int i = 0;
+		List<Object[]> l = new ArrayList<>();
+
 		for (int t = 0; t < 2; t++) {
-			for (int y = 0; y < 9; y++) {
-				for (int x = 0; x < 9; x++) {
-					params[i] = new Object[] {t==0, x, y };
-					i += 1;
+			for (int y = 0; y < 8; y++) {
+				for (int x = 0; x < 8; x++) {
+					l.add(new Object[] { t == 0, x * 2, y * 2 });
 				}
 			}
 		}
 
-		return Arrays.asList(params);
+		return l;
 	}
 
 	private ExhaustiveResearch er;
@@ -82,15 +81,15 @@ public class ExhaustiveResearchTest {
 			// top left corner, right and forward
 			moves.add(Board.LEFT);
 			moves.add(Board.FORWARD);
-		} else if (coords[0] == 8 && coords[1] == 0) {
+		} else if (coords[0] == 16 && coords[1] == 0) {
 			// top right corner, left or forward
 			moves.add(Board.RIGHT);
 			moves.add(Board.FORWARD);
-		} else if (coords[0] == 0 && coords[1] == 8) {
+		} else if (coords[0] == 0 && coords[1] == 16) {
 			// bottom left corner, right or back
 			moves.add(Board.LEFT);
 			moves.add(Board.BACK);
-		} else if (coords[0] == 8 && coords[1] == 8) {
+		} else if (coords[0] == 16 && coords[1] == 16) {
 			// bottom right corner, left or back
 			moves.add(Board.RIGHT);
 			moves.add(Board.BACK);
@@ -99,7 +98,7 @@ public class ExhaustiveResearchTest {
 			moves.add(Board.BACK);
 			moves.add(Board.FORWARD);
 			moves.add(Board.LEFT);
-		} else if (coords[0] == 8) {
+		} else if (coords[0] == 16) {
 			// right bound, back, forward or left
 			moves.add(Board.BACK);
 			moves.add(Board.FORWARD);
@@ -109,7 +108,7 @@ public class ExhaustiveResearchTest {
 			moves.add(Board.FORWARD);
 			moves.add(Board.LEFT);
 			moves.add(Board.RIGHT);
-		} else if (coords[1] == 8) {
+		} else if (coords[1] == 16) {
 			// bottom bound, back, left or right
 			moves.add(Board.BACK);
 			moves.add(Board.LEFT);
@@ -135,15 +134,15 @@ public class ExhaustiveResearchTest {
 			// top left corner, right and forward
 			moves.add(Board.RIGHT);
 			moves.add(Board.BACK);
-		} else if (coords[0] == 8 && coords[1] == 0) {
+		} else if (coords[0] == 16 && coords[1] == 0) {
 			// top right corner, left or forward
 			moves.add(Board.LEFT);
 			moves.add(Board.BACK);
-		} else if (coords[0] == 0 && coords[1] == 8) {
+		} else if (coords[0] == 0 && coords[1] == 16) {
 			// bottom left corner, right or back
 			moves.add(Board.RIGHT);
 			moves.add(Board.FORWARD);
-		} else if (coords[0] == 8 && coords[1] == 8) {
+		} else if (coords[0] == 16 && coords[1] == 16) {
 			// bottom right corner, left or back
 			moves.add(Board.LEFT);
 			moves.add(Board.FORWARD);
@@ -152,7 +151,7 @@ public class ExhaustiveResearchTest {
 			moves.add(Board.BACK);
 			moves.add(Board.FORWARD);
 			moves.add(Board.RIGHT);
-		} else if (coords[0] == 8) {
+		} else if (coords[0] == 16) {
 			// right bound, back, forward or left
 			moves.add(Board.BACK);
 			moves.add(Board.FORWARD);
@@ -162,7 +161,7 @@ public class ExhaustiveResearchTest {
 			moves.add(Board.BACK);
 			moves.add(Board.LEFT);
 			moves.add(Board.RIGHT);
-		} else if (coords[1] == 8) {
+		} else if (coords[1] == 16) {
 			// bottom bound, back, left or right
 			moves.add(Board.FORWARD);
 			moves.add(Board.LEFT);

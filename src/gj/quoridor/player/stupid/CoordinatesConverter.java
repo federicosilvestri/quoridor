@@ -51,7 +51,7 @@ public class CoordinatesConverter {
 		int yDistance = Math.abs(currentCoords[1] - nextCoords[1]);
 
 		// Return XOR operation between x and y distances equations.
-		return ((xDistance == 1) ^ (yDistance == 1));
+		return ((xDistance == 2) ^ (yDistance == 2));
 		// return (xDistance == 1 && yDistance == 0 || xDistance == 0 &&
 		// yDistance == 1);
 	}

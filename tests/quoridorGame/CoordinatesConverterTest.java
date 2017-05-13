@@ -29,8 +29,8 @@ public class CoordinatesConverterTest {
 		SecureRandom sr = new SecureRandom();
 
 		for (int i = 0; i < 1000; i++) {
-			// generate distance from 2 to 5
-			int distance = sr.nextInt(4) + 2;
+			// generate distance from 3 to 5
+			int distance = sr.nextInt(4) + 3;
 			int current[] = new int[] { sr.nextInt(9), sr.nextInt(9) };
 			int next[] = new int[] { current[0] + distance, current[1] };
 			int next2[] = new int[] { current[0], current[1] + distance };
@@ -98,10 +98,10 @@ public class CoordinatesConverterTest {
 	}
 
 	private void testForwardConvertCoords(CoordinatesConverter cv, int expectedDirection) {
-		for (int i = 0; i < 9; i++) {
-			for (int j = 0; j < 7; j++) {
+		for (int i = 0; i < 17; i += 2) {
+			for (int j = 0; j < 16; j += 2) {
 				int current[] = new int[] { i, j };
-				int next[] = new int[] { i, j + 1 };
+				int next[] = new int[] { i, j + 2 };
 
 				int move = cv.convert(current, next);
 				assertEquals(move, expectedDirection);
@@ -110,10 +110,10 @@ public class CoordinatesConverterTest {
 	}
 
 	private void testBackConvertCoords(CoordinatesConverter cv, int expectedDirection) {
-		for (int i = 8; i > -1; i--) {
-			for (int j = 8; j > 0; j--) {
+		for (int i = 17; i > -1; i -= 2) {
+			for (int j = 17; j > 0; j -= 2) {
 				int current[] = new int[] { i, j };
-				int next[] = new int[] { i, j - 1 };
+				int next[] = new int[] { i, j - 2 };
 
 				int move = cv.convert(current, next);
 				assertEquals(move, expectedDirection);
@@ -122,10 +122,10 @@ public class CoordinatesConverterTest {
 	}
 
 	private void testRightConvertCoords(CoordinatesConverter cv, int expectedDirection) {
-		for (int i = 8; i > -1; i--) {
-			for (int j = 8; j > 0; j--) {
+		for (int i = 17; i > -1; i -= 2) {
+			for (int j = 17; j > 0; j -= 2) {
 				int current[] = new int[] { j, i };
-				int next[] = new int[] { j - 1, i };
+				int next[] = new int[] { j - 2, i };
 
 				int move = cv.convert(current, next);
 				assertEquals(move, expectedDirection);
@@ -134,10 +134,10 @@ public class CoordinatesConverterTest {
 	}
 
 	private void testLeftConvertCoords(CoordinatesConverter cv, int expectedDirection) {
-		for (int i = 0; i < 9; i++) {
-			for (int j = 0; j < 8; j++) {
+		for (int i = 0; i < 17; i += 2) {
+			for (int j = 0; j < 17; j += 2) {
 				int current[] = new int[] { j, i };
-				int next[] = new int[] { j + 1, i };
+				int next[] = new int[] { j + 2, i };
 
 				int move = cv.convert(current, next);
 				assertEquals(move, expectedDirection);
