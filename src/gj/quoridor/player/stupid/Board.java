@@ -165,6 +165,10 @@ public class Board {
 		if (coords[1] < 0 || coords[1] > 16) {
 			return false;
 		}
+		
+		if (coords[0] % 2 != 0 || coords[1] % 2 != 0) {
+			return false;
+		}
 
 		return true;
 	}
