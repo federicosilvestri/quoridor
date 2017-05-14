@@ -105,8 +105,21 @@ public class BoardMatrix {
 		return result;
 	}
 	
+	public int[] getMainWallCoord(int index) {
+		int[] coord = new int[2];
+		
+		coord[1] = index / 8;
+		coord[0] = 2 * (index % 8) + (1 - coord[1] % 2);
+		
+		return coord;
+	}
+	
 	public List<int[]> getWallCoords(int index) {
 		List<int[]> coords = new ArrayList<>();
+		
+		// Get first main coordinates
+		int[] main = getMainWallCoord(index);
+		coords.add(main);
 		
 		if (wallIsVertical(index)) {
 			

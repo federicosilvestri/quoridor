@@ -75,7 +75,6 @@ public class Board {
 		playerCoords[BLUE] = new int[] { 8, 16 };
 		wallStock = new int[] { 10, 10 };
 		boardMatrix = new BoardMatrix(17, 17, playerCoords[RED], playerCoords[BLUE]);
-		System.out.println(boardMatrix);
 	}
 
 
