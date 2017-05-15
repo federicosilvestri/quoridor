@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import gj.quoridor.player.stupid.exceptions.BadMoveException;
+import gj.quoridor.player.stupid.exceptions.WallUnavailableException;
 
 public class BoardMatrix {
 
@@ -41,6 +42,23 @@ public class BoardMatrix {
 	 * Internal matrix
 	 */
 	private final int matrix[][];
+
+	private static int getPlayerWallCode(int player) {
+		switch (player) {
+		case Board.BLUE:
+			return BLUE_WALL;
+
+		case Board.RED:
+			return RED_WALL;
+
+		default:
+			throw new RuntimeException("Invalid player code");
+		}
+	}
+
+	private static int getPlayerPositionCode(int player) {
+		return (player == Board.RED) ? RED_POSITION : BLUE_POSITION;
+	}
 
 	public BoardMatrix(int rows, int cols, int[] redCoords, int blueCoords[]) {
 		matrix = new int[rows][cols];
@@ -92,67 +110,115 @@ public class BoardMatrix {
 
 		return true;
 	}
-	
+
 	public boolean wallIsVertical(int index) {
 		boolean result = false;
-		
+
 		for (int i = 0; i <= 7 && !result; i++) {
-			if (index >= (16 * i) && index <= (16 * i + 7)) {  
+			if (index >= (16 * i) && index <= (16 * i + 7)) {
 				result = true;
 			}
 		}
-		
+
 		return result;
 	}
-	
+
 	public int[] getMainWallCoord(int index) {
 		int[] coord = new int[2];
-		
+
 		coord[1] = index / 8;
 		coord[0] = 2 * (index % 8) + (1 - coord[1] % 2);
-		
+
 		return coord;
 	}
-	
-	public List<int[]> getWallCoords(int index) {
-		List<int[]> coords = new ArrayList<>();
-		
+
+	public int[][] getWallCoords(int index) {
+		int[][] coords = new int[3][2];
+
 		// Get first main coordinates
 		int[] main = getMainWallCoord(index);
-		coords.add(main);
-		
+		coords[0] = main;
+
 		if (wallIsVertical(index)) {
-			
+			coords[1] = new int[] { main[0], main[1] + 1 };
+			coords[2] = new int[] { main[0], main[1] + 2 };
 		} else {
-			
+			coords[1] = new int[] { main[0] + 1, main[1] };
+			coords[2] = new int[] { main[0] + 2, main[1] };
 		}
-		
+
 		return coords;
 	}
-	
-	public void putWall(int index, int player) {
-		
+
+	public boolean isWallAvailable(int[][] wallCoords) {
+		boolean available = true;
+
+		for (int i = 0; i < wallCoords.length && available; i++) {
+			int x = wallCoords[i][0];
+			int y = wallCoords[i][1];
+
+			if (matrix[y][x] != EMPTY_WALL) {
+				available = false;
+			}
+		}
+
+		return available;
+	}
+
+	public void addWall(int index, int player) {
+		// Get coordinates
+		int[][] coords = getWallCoords(index);
+
+		if (!isWallAvailable(coords)) {
+			throw new WallUnavailableException();
+		}
+
+		int wallCode = BoardMatrix.getPlayerWallCode(player);
+
+		for (int i = 0; i < coords.length; i++) {
+			int x = coords[i][0];
+			int y = coords[i][1];
+
+			matrix[y][x] = wallCode;
+		}
+	}
+
+	public void updatePlayerCoords(int player, int oldCoords[], int newCoords[]) {
+		int code = BoardMatrix.getPlayerPositionCode(player);
+
+		matrix[oldCoords[0]][oldCoords[1]] = BoardMatrix.EMPTY_POSITION;
+		matrix[newCoords[0]][newCoords[1]] = code;
 	}
 
 	@Override
 	public String toString() {
 		String s = "";
 
-		for (int x = 0; x < matrix.length; x++) {
-			for (int y = 0; y < matrix[x].length; y++) {
-				switch (matrix[y][x]) {
-				case EMPTY_WALL:
-					s += " ";
-					break;
-				case BLUE_POSITION:
-					s += " B ";
-					break;
-				case RED_POSITION:
-					s += " R ";
-					break;
-				default:
-					s += " " + matrix[y][x] + " ";
+		for (int i = 0; i < matrix.length; i++) {
+			for (int j = 0; j < matrix[i].length; j++) {
+				switch (matrix[i][j]) {
+					case EMPTY_POSITION:
+						s += "0";
+						break;
+					case EMPTY_WALL:
+						s += " ";
+						break;
+					case BLUE_POSITION:
+						s += "B";
+						break;
+					case RED_POSITION:
+						s += "R";
+						break;
+					case RED_WALL:
+						s += "#";
+						break;
+					case BLUE_WALL:
+						s += "@";
+						break;
+					default:
+						 s += " " + matrix[i][j] + " ";
 				}
+				s += " ";
 			}
 
 			s += "\n";

@@ -64,15 +64,15 @@ public class Board {
 	/**
 	 * Matrix where is located wall and players
 	 */
-	private final BoardMatrix boardMatrix;
+	public final BoardMatrix boardMatrix;
 
 	/**
 	 * Create a new Board Object starting from standard initial coordinates.
 	 */
 	public Board() {
 		playerCoords = new int[2][];
-		playerCoords[RED] = new int[] { 8, 0 };
-		playerCoords[BLUE] = new int[] { 8, 16 };
+		playerCoords[RED] = new int[] { 0, 8 };
+		playerCoords[BLUE] = new int[] { 16, 8 };
 		wallStock = new int[] { 10, 10 };
 		boardMatrix = new BoardMatrix(17, 17, playerCoords[RED], playerCoords[BLUE]);
 	}
@@ -99,11 +99,15 @@ public class Board {
 	}
 
 	private void putWall(int player, int index) {
-		// check if wall is available
+		// check if wall is available in stock
 		if (wallStock[player] < 1) {
 			throw new OutOfStockWallException(player, index);
 		}
 
+		// check if wall can be positioned in current index
+		
+		boardMatrix.addWall(index, player);
+		
 		wallStock[player] -= 1;
 		
 	}
@@ -117,7 +121,8 @@ public class Board {
 			throw new BadMoveException(player, nextCoords);
 		}
 
-		// apply move
+		// apply move to matrix
+		boardMatrix.updatePlayerCoords(player, playerCoords[player], nextCoords);
 		playerCoords[player] = nextCoords;
 	}
 
