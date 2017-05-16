@@ -2,6 +2,8 @@ package gj.quoridor.player.stupid;
 
 import gj.quoridor.player.stupid.exceptions.BadMoveException;
 import gj.quoridor.player.stupid.exceptions.OutOfStockWallException;
+import gj.quoridor.player.stupid.exceptions.PassedWallException;
+import gj.quoridor.player.stupid.exceptions.WallUnavailableException;
 
 /**
  * Board class.
@@ -71,8 +73,8 @@ public class Board {
 	 */
 	public Board() {
 		playerCoords = new int[2][];
-		playerCoords[RED] = new int[] { 0, 8 };
-		playerCoords[BLUE] = new int[] { 16, 8 };
+		playerCoords[RED] = new int[] { 8, 0 };
+		playerCoords[BLUE] = new int[] { 8, 16 };
 		wallStock = new int[] { 10, 10 };
 		boardMatrix = new BoardMatrix(17, 17, playerCoords[RED], playerCoords[BLUE]);
 	}
@@ -105,11 +107,15 @@ public class Board {
 		}
 
 		// check if wall can be positioned in current index
+		if (!boardMatrix.isWallAvailable(index)) {
+			throw new WallUnavailableException();
+		}
 		
+		// Add wall to Board Matrix
 		boardMatrix.addWall(index, player);
 		
+		// Remove from stock
 		wallStock[player] -= 1;
-		
 	}
 
 	private void performMove(int player, int direction) {
@@ -119,6 +125,13 @@ public class Board {
 		// check if coordinates are correct
 		if (!checkCoords(nextCoords)) {
 			throw new BadMoveException(player, nextCoords);
+		}
+		
+		// Check if move is legal
+		boolean pathValid = boardMatrix.checkPath(playerCoords[player], nextCoords);
+		
+		if (!pathValid) {
+			throw new PassedWallException(playerCoords[player], nextCoords);
 		}
 
 		// apply move to matrix
@@ -174,21 +187,6 @@ public class Board {
 			return false;
 		}
 
-		return true;
-	}
-
-	/**
-	 * Check if move is correct. If move is not correct, for example because
-	 * player has passed a wall, this method returns false.
-	 * 
-	 * @param current
-	 *            coordinates before move
-	 * @param next
-	 *            coordinates after move
-	 * @return true if move is corrected or false is move is not correct
-	 */
-	public boolean checkMove(int current[], int next[]) {
-		// Do not check |x0 -x1| + |y0-y1| = 2, because is forced by system
 		return true;
 	}
 

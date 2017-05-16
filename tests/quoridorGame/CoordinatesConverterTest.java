@@ -6,7 +6,6 @@ import java.security.SecureRandom;
 import java.util.Arrays;
 
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 
 import gj.quoridor.player.stupid.Board;
