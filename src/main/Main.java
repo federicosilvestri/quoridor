@@ -12,10 +12,6 @@ public class Main {
 		board.play(Board.BLUE, Board.MOVE, Board.FORWARD);
 		
 		BoardMatrix bm = board.boardMatrix;
-		System.out.println(bm);
-		
-		
-		
-		
+		System.out.println(bm);	
 	}
 }

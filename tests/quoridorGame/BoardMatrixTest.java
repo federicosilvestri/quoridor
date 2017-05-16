@@ -15,7 +15,7 @@ import org.junit.runners.Parameterized.Parameters;
 import gj.quoridor.player.stupid.BoardMatrix;
 
 @RunWith(Parameterized.class)
-public class PutWallTest {
+public class BoardMatrixTest {
 
 	private final static int VERTICAL[] = new int[] { 0, 1, 2, 3, 4, 5, 6, 7, 16, 17, 18, 19, 20, 21, 22, 23, 32, 33,
 			34, 35, 36, 37, 38, 39, 48, 49, 50, 51, 52, 53, 54, 55, 64, 65, 66, 67, 68, 69, 70, 71, 80, 81, 82, 83, 84,
@@ -42,7 +42,7 @@ public class PutWallTest {
 
 		return l;
 	}
-	
+
 	private static void initMatrix(int[][] matrix, int value) {
 		for (int i = 0; i < matrix.length; i++) {
 			for (int j = 0; j < matrix[i].length; j++) {
@@ -54,7 +54,7 @@ public class PutWallTest {
 	private static void initRowVector() {
 		// First initialize all elements to -1
 		initMatrix(WALL_MATRIX_Y, -1);
-		
+
 		int r = 0;
 		for (int i = 0; i < WALL_MATRIX_Y.length; i++) {
 			for (int j = 0; j < WALL_MATRIX_Y[i].length; j++) {
@@ -66,7 +66,7 @@ public class PutWallTest {
 	private static void initColsVector() {
 		// Same thing, initialize all elements to -1
 		initMatrix(WALL_MATRIX_X, -1);
-		
+
 		int kr = 0;
 		int kh = 8;
 		for (int i = 0; i < WALL_MATRIX_X.length; i++) {
@@ -87,38 +87,38 @@ public class PutWallTest {
 			}
 		}
 	}
-	
+
 	public static String stringifyMatrices() {
 		initRowVector();
 		initColsVector();
-		
+
 		String s = "- WALL MATRIX X -\n";
-		
+
 		for (int y = 0; y < WALL_MATRIX_X.length; y++) {
 			for (int x = 0; x < WALL_MATRIX_X[y].length; x++) {
 				s += WALL_MATRIX_X[y][x] + "\t";
 			}
-			
+
 			s += "\n";
 		}
-	
+
 		s += "\n-WALL MATRIX Y -\n";
-		
+
 		for (int y = 0; y < WALL_MATRIX_Y.length; y++) {
 			for (int x = 0; x < WALL_MATRIX_Y[y].length; x++) {
 				s += WALL_MATRIX_Y[y][x] + "\t";
 			}
-			
+
 			s += "\n";
 		}
-		
+
 		return s;
 	}
 
 	private final int index;
 	private BoardMatrix boardMatrix;
 
-	public PutWallTest(int index) {
+	public BoardMatrixTest(int index) {
 		this.index = index;
 		boardMatrix = new BoardMatrix(17, 17, new int[] { 0, 0 }, new int[] { 0, 0 });
 	}
@@ -138,7 +138,7 @@ public class PutWallTest {
 	}
 
 	private int[] getCoords(int wallIndex) {
-		int[] coords = new int[] {-1, -1};
+		int[] coords = new int[] { -1, -1 };
 
 		// Searching index of X
 		for (int i = 0; i < WALL_MATRIX_X.length; i++) {
@@ -164,6 +164,12 @@ public class PutWallTest {
 	@Test
 	public void getMainWallCoordTest() {
 		assertEquals(Arrays.toString(getCoords(index)), Arrays.toString(boardMatrix.getWallCoords(index)[0]));
+	}
+	
+	@Test
+	public void verifySurpassedWall() {
+		// Use already test wall matrix
+		//int[][] coords = boardMatrix.getWallCoords(index);
 	}
 
 }
