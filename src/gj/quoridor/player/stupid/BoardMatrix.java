@@ -278,12 +278,12 @@ public class BoardMatrix {
 
 		if (delta == 0) {
 			// Y move
-			wallX = (start[1] + end[1]) / 2; // if moves are 2-based,
+			wallY = (start[1] + end[1]) / 2; // if moves are 2-based,
 													// number between A and B
 													// exists always in N|.
 		} else {
 			// X Move
-			wallY = (start[0] + end[0]) / 2;
+			wallX = (start[0] + end[0]) / 2;
 		}
 
 		return matrix[wallY][wallX];
