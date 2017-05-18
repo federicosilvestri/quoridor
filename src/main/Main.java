@@ -1,9 +1,8 @@
 package main;
 
-import java.util.Arrays;
-
 import gj.quoridor.player.stupid.Board;
 import gj.quoridor.player.stupid.BoardMatrix;
+import gj.quoridor.player.stupid.Dijikstra;
 
 public class Main {
 
@@ -30,14 +29,8 @@ public class Main {
 		// boolean available = bm.pathAvailable(0, 16, 0, 16, 0, 16);
 		// System.out.println("Path available: " + available);
 		int[][] adjMatrix = bm.generateAdjacencyMatrix();
+		Dijikstra d = new Dijikstra(adjMatrix, 0);
 		
-		for (int i = 0; i < adjMatrix.length; i++) {
-			for (int j = 0; j < adjMatrix.length; j++) {
-				System.out.print(adjMatrix[i][j] + "");
-			}
-			System.out.println();
-		}
-		
-		System.out.println(adjMatrix[12][3]);
+		d.dijkstra();
 	}
 }
