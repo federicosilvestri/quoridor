@@ -88,6 +88,23 @@ public class BoardMatrix {
 	}
 
 	/**
+	 * Get cell coordinates by index
+	 * 
+	 * @param index
+	 *            index of cell
+	 * @return array of integer that represents x and y
+	 */
+	public int[] getCellCoordsByIndex(int index) {
+		int coords[] = new int[2];
+		int cols = (matrix.length + 1) / 2;
+
+		coords[0] = (index % cols) * 2;
+		coords[1] = (index / cols) * 2;
+
+		return coords;
+	}
+
+	/**
 	 * Get coordinates of adjacent walls, related to passed cell coordinates.
 	 * 
 	 * @param cellCoords
@@ -230,6 +247,10 @@ public class BoardMatrix {
 		return (wallValue == BLUE_WALL) || (wallValue == RED_WALL);
 	}
 
+	private boolean isWallActive(int x, int y) {
+		return isWallActive(matrix[y][x]);
+	}
+
 	/**
 	 * Add a wall on matrix. This method controls if wall is already place on
 	 * matrix. If is already placed this method will throw a
@@ -279,8 +300,8 @@ public class BoardMatrix {
 		if (delta == 0) {
 			// Y move
 			wallY = (start[1] + end[1]) / 2; // if moves are 2-based,
-													// number between A and B
-													// exists always in N|.
+												// number between A and B
+												// exists always in N|.
 		} else {
 			// X Move
 			wallX = (start[0] + end[0]) / 2;
@@ -303,7 +324,7 @@ public class BoardMatrix {
 	 */
 	public boolean checkPath(int start[], int end[]) {
 		int wall = getWallByPath(start, end);
-		
+
 		return !isWallActive(wall);
 	}
 
@@ -327,6 +348,93 @@ public class BoardMatrix {
 		matrix[oldCoords[1]][oldCoords[0]] = BoardMatrix.EMPTY_POSITION;
 		// Update new position with player code
 		matrix[newCoords[1]][newCoords[0]] = code;
+	}
+
+	public boolean arePathAvailable(int matrix[][]) {
+		boolean available = false;
+
+		// Check horizontally if there are walls and put in a queue
+
+		return available;
+	}
+
+	public boolean pathAvailable(int lx, int rx, int rrl, int rrr, int y, int dy) {
+		assert (lx % 2 == 0 && rx % 2 == 0 && y % 2 == 0);
+
+		System.out.println("Call main pathAvailable(" + lx + "," + rx + "," + y + "," + dy + ")");
+		if (y >= dy) {
+			System.out.println("destination reached, return true");
+			return true;
+		}
+
+		if (lx >= rrr) {
+			System.out.println("no cells to inspects, return false");
+			return false;
+		}
+
+		int i = lx;
+		boolean wallLocked = false;
+
+		while (i < rrr && isWallActive(i, y + 1) && !(wallLocked = isWallActive(i + 1, y))) {
+			i += 2;
+		}
+
+		if (i == rx) {
+			System.out.println("No way to escape, return false");
+			return false;
+		}
+
+		int lx0 = i;
+		while (i < rrr && !isWallActive(i, y + 1) && !(wallLocked = isWallActive(i + 1, y))) {
+			i += 2;
+		}
+
+		// left side
+		int rx0 = i;
+		System.out.println("Left side calling...");
+		boolean ls = pathAvailable(lx0, rx0, rrl, rrr, y + 2, dy);
+
+		// right side
+		int lx1 = rx0;
+		if (wallLocked) {
+			// partition again
+			lx1 = i + 2;
+		}
+		System.out.println("Right side calling...");
+		boolean rs = pathAvailable(lx1, rx, rrl, rrr, y, dy);
+
+		System.out.println("Left side says: " + ls + ", right says: " + rs + " so: " + (rs || ls));
+		return (ls || rs);
+
+	}
+
+	public int[][] generateAdjacencyMatrix() {
+		// Calculating size of adjacency matrix
+		int cols = (matrix.length + 1) / 2;
+		cols = cols * cols;
+		int rows = (matrix[0].length + 1) / 2;
+		rows = rows * rows;
+		int adjMatrix[][] = new int[rows][cols];
+
+		for (int i = 0; i < adjMatrix.length; i++) {
+			for (int j = 0; j < adjMatrix[i].length; j++) {
+				int a[] = getCellCoordsByIndex(i);
+				int b[] = getCellCoordsByIndex(j);
+				
+				// check distance
+				int distance = Math.abs(a[0] - b[0]) + Math.abs(a[1] - b[1]);
+				
+				if (distance > 2) {
+					adjMatrix[i][j] = -1;
+				} else {
+					if (checkPath(a, b)) {
+						adjMatrix[i][j] = 1;
+					}
+				}
+			}
+		}
+
+		return adjMatrix;
 	}
 
 	@Override
