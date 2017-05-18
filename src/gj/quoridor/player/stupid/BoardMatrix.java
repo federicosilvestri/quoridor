@@ -358,54 +358,79 @@ public class BoardMatrix {
 		return available;
 	}
 
-	public boolean pathAvailable(int lx, int rx, int rrl, int rrr, int y, int dy) {
-		assert (lx % 2 == 0 && rx % 2 == 0 && y % 2 == 0);
+	// alias of x, lx, rx, y, dy
+	public boolean pathAvailable(int start, int l, int r, int y, int dy) {
+		boolean assertion = ((start % 2) == 0) && ((l % 2) == 0) && ((r % 2) == 0) && ((y % 2) == 0) && ((dy % 2) == 0);
+		boolean assertion2 = (start >= l) && (start <= r) && (l >= 0) && (r >= 0) && (r >= l) && (y >= 0) && (dy >= y);
 
-		System.out.println("Call main pathAvailable(" + lx + "," + rx + "," + y + "," + dy + ")");
-		if (y >= dy) {
-			System.out.println("destination reached, return true");
+		if (!assertion || !assertion2) {
+			throw new RuntimeException("Indexes are not valid");
+		}
+
+		if (y == dy) {
+			// reached destination y, stop it
 			return true;
 		}
 
-		if (lx >= rrr) {
-			System.out.println("no cells to inspects, return false");
-			return false;
+		boolean leftSide;
+		boolean rightSide;
+
+		// left side iteration
+		int lx = start;
+		boolean foundVerticalWall = false;
+		System.out.println("Starting left iteration from: " + lx  + " to " + l);
+		while (lx >= l && !foundVerticalWall && isWallActive(lx, y + 1)) {
+			int verticalWallIndex = lx - 1;
+
+			if (verticalWallIndex < l) {
+				// we don't have to check anymore
+				foundVerticalWall = false;
+			} else {
+				foundVerticalWall = isWallActive(verticalWallIndex, y);
+			}
+
+			lx -= 2;
 		}
 
-		int i = lx;
-		boolean wallLocked = false;
-
-		while (i < rrr && isWallActive(i, y + 1) && !(wallLocked = isWallActive(i + 1, y))) {
-			i += 2;
+		if (lx < l || foundVerticalWall) {
+			// top is all locked or left side is locked
+			leftSide = false;
+		} else {
+//			leftSide = true;
+			leftSide = pathAvailable(lx, l, r, y + 2, dy);
+			// found free space
+			System.out.println("Found top free space on left, with index: " + lx + "," + y);
 		}
 
-		if (i == rx) {
-			System.out.println("No way to escape, return false");
-			return false;
+		// right side iteration
+		int rx = start;
+//		System.out.println("Starting right iteration from: " + rx  + " to " + r);
+		do {
+			int verticalWallIndex = rx + 1;
+
+			if (verticalWallIndex > r) {
+				// we don't have to check anymore
+				foundVerticalWall = false;
+			} else {
+				foundVerticalWall = isWallActive(verticalWallIndex, y);
+			}
+
+			rx += 2;
+		} while (rx <= r && !foundVerticalWall && isWallActive(rx, y + 1));
+
+		if (rx > r || foundVerticalWall) {
+			// top is all locked
+			rightSide = false;
+		} else {
+//			rightSide = true;
+			rightSide = pathAvailable(rx, l, r, y + 2, dy);
+			// Found free space on top
+			System.out.println("Found top free space on right, with index: " + rx + "," + y);
 		}
 
-		int lx0 = i;
-		while (i < rrr && !isWallActive(i, y + 1) && !(wallLocked = isWallActive(i + 1, y))) {
-			i += 2;
-		}
+		System.out.println("Left: " + lx + ", right: " + rx);
 
-		// left side
-		int rx0 = i;
-		System.out.println("Left side calling...");
-		boolean ls = pathAvailable(lx0, rx0, rrl, rrr, y + 2, dy);
-
-		// right side
-		int lx1 = rx0;
-		if (wallLocked) {
-			// partition again
-			lx1 = i + 2;
-		}
-		System.out.println("Right side calling...");
-		boolean rs = pathAvailable(lx1, rx, rrl, rrr, y, dy);
-
-		System.out.println("Left side says: " + ls + ", right says: " + rs + " so: " + (rs || ls));
-		return (ls || rs);
-
+		return leftSide || rightSide;
 	}
 
 	public int[][] generateAdjacencyMatrix() {
@@ -420,12 +445,12 @@ public class BoardMatrix {
 			for (int j = 0; j < adjMatrix[i].length; j++) {
 				int a[] = getCellCoordsByIndex(i);
 				int b[] = getCellCoordsByIndex(j);
-				
+
 				// check distance
 				int distance = Math.abs(a[0] - b[0]) + Math.abs(a[1] - b[1]);
-				
+
 				if (distance > 2) {
-					adjMatrix[i][j] = -1;
+					adjMatrix[i][j] = Integer.MAX_VALUE;
 				} else {
 					if (checkPath(a, b)) {
 						adjMatrix[i][j] = 1;
