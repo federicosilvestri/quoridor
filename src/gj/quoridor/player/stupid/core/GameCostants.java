@@ -16,12 +16,12 @@ public class GameCostants {
 	 * Distance between a cell and a wall.
 	 */
 	public final static int CELL_WALL_DISTANCE = 1;
-	
+
 	/**
 	 * Distance between two cells.
 	 */
 	public final static int CELLS_DISTANCE = 2;
-	
+
 	/**
 	 * Number of max moves.
 	 */
@@ -30,15 +30,15 @@ public class GameCostants {
 	/**
 	 * Number of max walls.
 	 */
-	public final static int MAX_WALLS = 10;	
+	public final static int MAX_WALLS = 10;
 
 	/**
 	 * Initial red position using coordinates.
 	 */
-	public final static int[] INITIAL_RED_COORDS = new int[] {};
+	public final static int[] INITIAL_RED_COORDS = new int[] { 8, 0 };
 
 	/**
 	 * Initial blue position using coordinates.
 	 */
-	public final static int[] INITIAL_BLUE_COORDS = new int[] {};
+	public final static int[] INITIAL_BLUE_COORDS = new int[] { 8, 16 };
 }

@@ -3,6 +3,7 @@ package gj.quoridor.player.stupid.core;
 import java.util.ArrayList;
 import java.util.List;
 
+import gj.quoridor.player.stupid.core.engine.PathSearcher;
 import gj.quoridor.player.stupid.exceptions.WallUnavailableException;
 
 public class Board {
@@ -153,7 +154,7 @@ public class Board {
 	 * @param cols
 	 *            number of columns
 	 */
-	public Board(int rows, int cols) {
+	public Board(int rows, int cols, int[] initialRed, int[] initialBlue) {
 		matrix = new int[rows][cols];
 		for (int i = 0; i < rows; i++) {
 			for (int j = 0; j < cols; j++) {
@@ -164,6 +165,8 @@ public class Board {
 				}
 			}
 		}
+		matrix[initialRed[1]][initialRed[0]] = RED_POSITION;
+		matrix[initialBlue[1]][initialBlue[0]] = BLUE_POSITION;
 	}
 
 	// Cells management
@@ -398,5 +401,49 @@ public class Board {
 		int wall = getWallByPath(new int[] { x0, y0 }, new int[] { x1, y1 });
 
 		return !isWallActive(wall);
+	}
+
+	// Path and external object management
+
+	public PathSearcher buildPathSearcher() {
+		PathSearcher pathSearcher = new PathSearcher(matrix);
+
+		return pathSearcher;
+	}
+
+	@Override
+	public String toString() {
+		String s = "";
+
+		for (int i = 0; i < matrix.length; i++) {
+			for (int j = 0; j < matrix[i].length; j++) {
+				switch (matrix[i][j]) {
+				case EMPTY_WALL:
+					s += " ";
+					break;
+				case EMPTY_POSITION:
+					s += "O";
+					break;
+				case BLUE_POSITION:
+					s += "B";
+					break;
+				case RED_POSITION:
+					s += "R";
+					break;
+				case BLUE_WALL:
+					s += "#";
+					break;
+				case RED_WALL:
+					s += "@";
+					break;
+				}
+				
+				s += " ";
+			}
+
+			s += "\n";
+		}
+
+		return s;
 	}
 }

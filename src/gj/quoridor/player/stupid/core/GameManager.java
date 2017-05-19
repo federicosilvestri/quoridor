@@ -10,6 +10,7 @@ import gj.quoridor.player.stupid.exceptions.WallUnavailableException;
  * Game Manager Object.
  * 
  * This object is responsible of Game moves
+ * @TODO add move stock check and control
  * 
  * @author federicosilvestri
  *
@@ -86,7 +87,7 @@ public class GameManager {
 		playerCoords[BLUE] = GameCostants.INITIAL_BLUE_COORDS;
 		moveStock = new int[2];
 		moveStock[RED] = moveStock[BLUE] = GameCostants.MAX_MOVES;
-		board = new Board(GameCostants.BOARD_ROWS, GameCostants.BOARD_COLS);
+		board = new Board(GameCostants.BOARD_ROWS, GameCostants.BOARD_COLS, GameCostants.INITIAL_RED_COORDS, GameCostants.INITIAL_BLUE_COORDS);
 	}
 
 	/**
@@ -163,6 +164,8 @@ public class GameManager {
 		if (!board.isWallOccupied(index)) {
 			throw new WallUnavailableException();
 		}
+		
+		// Checks if with currently wall configuration destination of player is reachable
 
 		// Add wall to Board Matrix
 		board.addWall(index, player);
