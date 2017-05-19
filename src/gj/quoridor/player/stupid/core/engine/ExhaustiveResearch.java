@@ -1,6 +1,9 @@
-package gj.quoridor.player.stupid;
+package gj.quoridor.player.stupid.core.engine;
 
 import java.util.List;
+
+import gj.quoridor.player.stupid.core.GameManager;
+
 import java.util.ArrayList;
 
 
@@ -13,7 +16,7 @@ public class ExhaustiveResearch {
 	/**
 	 * Board object.
 	 */
-	private final Board board;
+	private final GameManager gameManager;
 
 	/**
 	 * Create a new exhaustive search object.
@@ -21,9 +24,9 @@ public class ExhaustiveResearch {
 	 * @param player
 	 * @param board
 	 */
-	public ExhaustiveResearch(int player, Board board) {
+	public ExhaustiveResearch(int player, GameManager gameManager) {
 		this.player = player;
-		this.board = board;
+		this.gameManager = gameManager;
 
 	}
 
@@ -38,12 +41,12 @@ public class ExhaustiveResearch {
 
 		// move actions
 		for (int move : computeMoves()) {
-			actions.add(new int[] { Board.MOVE, move });
+			actions.add(new int[] { GameManager.MOVE, move });
 		}
 
 		// put-wall action
 		for (int wallIndex : computeWalls()) {
-			actions.add(new int[] { Board.PUT_WALL, wallIndex });
+			actions.add(new int[] { GameManager.PUT_WALL, wallIndex });
 		}
 
 		return actions;
@@ -53,17 +56,17 @@ public class ExhaustiveResearch {
 		ArrayList<Integer> moves = new ArrayList<>();
 
 		// create all 4 moves
-		int testMoves[] = new int[] { Board.FORWARD, Board.BACK, Board.LEFT, Board.RIGHT };
+		int testMoves[] = new int[] { GameManager.FORWARD, GameManager.BACK, GameManager.LEFT, GameManager.RIGHT };
 
 		// check 4 moves
 		for (int move : testMoves) {
 			// get coordinates produced by this move
-			int coords[] = board.computeMoveCoords(player, move);
+			int coords[] = gameManager.computeMove(player, move);
 
-			// check if coordinates of player are valid
-			if (board.checkCoords(coords)) {
-				moves.add(move);
-			}
+//			// check if coordinates of player are valid
+//			if (gameManager.board.checkCoords(coords)) {
+//				moves.add(move);
+//			}
 		}
 
 		return moves;
@@ -72,7 +75,7 @@ public class ExhaustiveResearch {
 	private ArrayList<Integer> computeWalls() {
 		ArrayList<Integer> walls = new ArrayList<>();
 		
-		if (board.wallAvailable(player)) {
+		if (gameManager.areWallsAvailable(player)) {
 			// in questo caso potrei fare due cose
 			// o cercare tutti i muri liberi chiedendo la wall matrix al
 			// BoardMatrix, oppure implementare nel wall matrix una hashmap
@@ -80,7 +83,7 @@ public class ExhaustiveResearch {
 
 			// per ora itero tutti e 128 i muri
 			for (int i = 0; i < 128; i++) {
-				if (board.wallAvailable(i)) {
+				if (gameManager.board.isWallOccupied(i)) {
 					// also we need to check if path after put-wall-move is legal
 
 					// simulate move and check path
