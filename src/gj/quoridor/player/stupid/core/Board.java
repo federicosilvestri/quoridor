@@ -320,18 +320,18 @@ public class Board {
 	 * @return true if wall is available, false otherwise
 	 */
 	public boolean isWallOccupied(int[][] wallCoords) {
-		boolean available = true;
+		boolean occupied = false;
 
-		for (int i = 0; i < wallCoords.length && available; i++) {
+		for (int i = 0; i < wallCoords.length && !occupied; i++) {
 			int x = wallCoords[i][0];
 			int y = wallCoords[i][1];
 
 			if (matrix[y][x] != EMPTY_WALL) {
-				available = false;
+				occupied = true;
 			}
 		}
 
-		return available;
+		return occupied;
 	}
 
 	/**

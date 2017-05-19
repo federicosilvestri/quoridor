@@ -1,26 +1,48 @@
 package gj.quoridor.player.stupid;
 
+import java.security.SecureRandom;
+import java.util.Arrays;
+import java.util.List;
+
 import gj.quoridor.player.Player;
+import gj.quoridor.player.stupid.core.GameManager;
+import gj.quoridor.player.stupid.core.engine.ExhaustiveResearch;
 
 public class StupidPlayer implements Player {
+	private int player;
+	private int opponent;
+	private GameManager gameManager;
 
 	@Override
 	public int[] move() {
-		// TODO [0 => move, != 0 => wall], [coord]
-		return new int[] {0,4};
+		ExhaustiveResearch er = new ExhaustiveResearch(player, gameManager);
+		List<int[]> actions = er.getActions();
+		SecureRandom sr = new SecureRandom();
+		int[] action = actions.get(sr.nextInt(actions.size()));
+		
+		System.out.println("RETURN MOVE: " + Arrays.toString(action));
+		gameManager.play(player, action[0], action[1]);
+		System.out.println(gameManager.board);
+		
+		
+		return action;
 	}
 
 	@Override
 	public void start(boolean isFirst) {
-		// TODO start game
-		
+		gameManager = new GameManager();
+		player = isFirst ? GameManager.RED : GameManager.BLUE;
+		opponent = isFirst ? GameManager.BLUE : GameManager.RED;
 	}
 
 	@Override
 	public void tellMove(int[] move) {
-		// TODO tell the player move
+		System.out.println("TOLD MOVE: " + Arrays.toString(move));
 		
-		
+		gameManager.play(opponent, move[0], move[1]);
+		System.out.println("---- GEN MATRIX ----");
+		System.out.println(gameManager.board);
+		System.out.println("---- END MATRIX ----");
 	}
 
 }

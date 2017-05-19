@@ -182,7 +182,7 @@ public class GameManager {
 		int[][] wallCoords = board.getWallCoords(index);
 
 		// check if wall can be positioned in current index
-		if (!board.isWallOccupied(wallCoords)) {
+		if (board.isWallOccupied(wallCoords)) {
 			throw new WallUnavailableException();
 		}
 

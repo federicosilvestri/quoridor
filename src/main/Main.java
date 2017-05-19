@@ -7,7 +7,20 @@ public class Main {
 	public static void main(String args[]) {
 		GameManager manager = new GameManager();
 
-		manager.play(GameManager.RED, GameManager.PUT_WALL, 40);
+		
+		for (int i = 0; i < 100; i++) {
+			manager.play(GameManager.RED, GameManager.MOVE, GameManager.FORWARD);
+
+			System.out.println(manager.board);
+			System.out.println("---- END MATRIX -----");
+			try {
+				Thread.sleep(5000);
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+		
 //		manager.play(GameManager.RED, GameManager.PUT_WALL, 17);
 //		manager.play(GameManager.RED, GameManager.PUT_WALL, 10);
 //		manager.play(GameManager.RED, GameManager.PUT_WALL, 12);
@@ -15,6 +28,6 @@ public class Main {
 		//manager.play(GameManager.RED, GameManager.PUT_WALL, 30);
 		//manager.play(GameManager.RED, GameManager.PUT_WALL, 15);
 
-		System.out.println(manager.board);
+		
 	}
 }
