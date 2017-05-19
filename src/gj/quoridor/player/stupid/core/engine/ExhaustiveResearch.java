@@ -6,7 +6,6 @@ import gj.quoridor.player.stupid.core.GameManager;
 
 import java.util.ArrayList;
 
-
 public class ExhaustiveResearch {
 	/**
 	 * Is read or blue boolean.
@@ -60,13 +59,10 @@ public class ExhaustiveResearch {
 
 		// check 4 moves
 		for (int move : testMoves) {
-			// get coordinates produced by this move
-			int coords[] = gameManager.computeMove(player, move);
-
-//			// check if coordinates of player are valid
-//			if (gameManager.board.checkCoords(coords)) {
-//				moves.add(move);
-//			}
+			// check if coordinates of player are valid
+			if (gameManager.canMove(player, move)) {
+				moves.add(move);
+			}
 		}
 
 		return moves;
@@ -74,24 +70,27 @@ public class ExhaustiveResearch {
 
 	private ArrayList<Integer> computeWalls() {
 		ArrayList<Integer> walls = new ArrayList<>();
-		
-		if (gameManager.areWallsAvailable(player)) {
-			// in questo caso potrei fare due cose
-			// o cercare tutti i muri liberi chiedendo la wall matrix al
-			// BoardMatrix, oppure implementare nel wall matrix una hashmap
-			// che aggiunge nel costruttore tutti i muri e poi li rimuove
+		int[] redCoords = gameManager.getPlayerCoords(GameManager.RED);
+		int[] blueCoords = gameManager.getPlayerCoords(GameManager.BLUE);
 
-			// per ora itero tutti e 128 i muri
-			for (int i = 0; i < 128; i++) {
-				if (gameManager.board.isWallOccupied(i)) {
-					// also we need to check if path after put-wall-move is legal
+		if (!gameManager.areWallsAvailable(player)) {
+			return walls;
+		}
 
+		// Iterating walls that aren't used yet
+		for (Integer wallIndex : gameManager.getAvailableWalls()) {
+			int wallCoord[][] = gameManager.board.getWallCoords(wallIndex);
+			// But test if they're compatible
+			if (!gameManager.board.isWallOccupied(wallCoord)) {
+				// also we need to check if path after put-wall-move is
+				// legal
+				if (gameManager.board.checkReachability(wallIndex, blueCoords, redCoords)) {
 					// simulate move and check path
-					walls.add(i);
+					walls.add(wallIndex);
 				}
 			}
 		}
-			
+
 		return walls;
 	}
 

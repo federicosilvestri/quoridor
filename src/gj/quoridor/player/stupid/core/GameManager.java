@@ -1,5 +1,8 @@
 package gj.quoridor.player.stupid.core;
 
+import java.util.LinkedList;
+import java.util.List;
+
 import gj.quoridor.player.stupid.exceptions.BadMoveException;
 import gj.quoridor.player.stupid.exceptions.InvalidDirection;
 import gj.quoridor.player.stupid.exceptions.OutOfStockWallException;
@@ -10,6 +13,7 @@ import gj.quoridor.player.stupid.exceptions.WallUnavailableException;
  * Game Manager Object.
  * 
  * This object is responsible of Game moves
+ * 
  * @TODO add move stock check and control
  * 
  * @author federicosilvestri
@@ -64,12 +68,17 @@ public class GameManager {
 	/**
 	 * Stock of walls.
 	 */
-	private final int[] wallStock;
+	private final int[] wallAvailability;
+
+	/**
+	 * 
+	 */
+	private final LinkedList<Integer> wallStock;
 
 	/**
 	 * Stock of available moves.
 	 */
-	private final int[] moveStock;
+	private final int[] moveAvailability;
 
 	/**
 	 * Board object.
@@ -80,14 +89,23 @@ public class GameManager {
 	 * Create a new game manager.
 	 */
 	public GameManager() {
-		wallStock = new int[2];
-		wallStock[RED] = wallStock[BLUE] = GameCostants.MAX_WALLS;
 		playerCoords = new int[2][2];
 		playerCoords[RED] = GameCostants.INITIAL_RED_COORDS;
 		playerCoords[BLUE] = GameCostants.INITIAL_BLUE_COORDS;
-		moveStock = new int[2];
-		moveStock[RED] = moveStock[BLUE] = GameCostants.MAX_MOVES;
-		board = new Board(GameCostants.BOARD_ROWS, GameCostants.BOARD_COLS, GameCostants.INITIAL_RED_COORDS, GameCostants.INITIAL_BLUE_COORDS);
+
+		wallAvailability = new int[2];
+		wallAvailability[RED] = wallAvailability[BLUE] = GameCostants.MAX_WALLS;
+
+		wallStock = new LinkedList<>();
+		for (int i = 0; i < GameCostants.TOTAL_WALLS; i++) {
+			wallStock.add(i);
+		}
+
+		moveAvailability = new int[2];
+		moveAvailability[RED] = moveAvailability[BLUE] = GameCostants.MAX_MOVES;
+
+		board = new Board(GameCostants.BOARD_ROWS, GameCostants.BOARD_COLS, GameCostants.INITIAL_RED_COORDS,
+				GameCostants.INITIAL_BLUE_COORDS);
 	}
 
 	/**
@@ -109,7 +127,7 @@ public class GameManager {
 	 * @return integer value between 0 and 10
 	 */
 	public int getAvailableWallNumber(int player) {
-		return wallStock[player];
+		return wallAvailability[player];
 	}
 
 	/**
@@ -120,7 +138,7 @@ public class GameManager {
 	 * @return true if walls are available, false otherwise
 	 */
 	public boolean areWallsAvailable(int player) {
-		return (wallStock[player] > 0);
+		return (wallAvailability[player] > 0);
 	}
 
 	/**
@@ -131,7 +149,7 @@ public class GameManager {
 	 * @return number of available moves
 	 */
 	public int getAvailableMovesNumber(int player) {
-		return (moveStock[player]);
+		return (moveAvailability[player]);
 	}
 
 	/**
@@ -156,22 +174,33 @@ public class GameManager {
 
 	private void putWall(int player, int index) {
 		// check if wall is available in stock
-		if (wallStock[player] < 1) {
+		if (wallAvailability[player] < 1) {
 			throw new OutOfStockWallException(player, index);
 		}
+		
+		// Get wall coords
+		int[][] wallCoords = board.getWallCoords(index);
 
 		// check if wall can be positioned in current index
-		if (!board.isWallOccupied(index)) {
+		if (!board.isWallOccupied(wallCoords)) {
 			throw new WallUnavailableException();
 		}
-		
-		// Do not check if wall locks paths
+
+		// check if wall locks paths
+//		boolean reachibility = board.checkReachability(index, playerCoords[BLUE], playerCoords[RED]);
+//		
+//		if (!reachibility) {
+//			throw new RuntimeException("No paths available for players");
+//		}
 
 		// Add wall to Board Matrix
-		board.addWall(index, player);
+		board.addWall(wallCoords, player);
 
+		// Remove index from stock
+		wallStock.remove(wallStock.indexOf(index));
+		
 		// Remove from stock
-		wallStock[player] -= 1;
+		wallAvailability[player] -= 1;
 	}
 
 	private void move(int player, int direction) {
@@ -184,15 +213,17 @@ public class GameManager {
 		}
 
 		// Check if move is legal
-		int moveDistance = Board.getMoveDistance(playerCoords[player][0], playerCoords[player][1], nextCoords[0], nextCoords[1]);
-		boolean pathValid = (moveDistance <= GameCostants.CELLS_DISTANCE); 
+		int moveDistance = Board.getMoveDistance(playerCoords[player][0], playerCoords[player][1], nextCoords[0],
+				nextCoords[1]);
+		boolean pathValid = (moveDistance <= GameCostants.CELLS_DISTANCE);
 
 		if (!pathValid) {
 			throw new BadMoveException(player, nextCoords);
 		}
-		
-		boolean checkWalls = board.checkBrokenWalls(playerCoords[player][0], playerCoords[player][1], nextCoords[0], nextCoords[1]);
-		
+
+		boolean checkWalls = board.checkBrokenWalls(playerCoords[player][0], playerCoords[player][1], nextCoords[0],
+				nextCoords[1]);
+
 		if (!checkWalls) {
 			throw new PassedWallException(playerCoords[player], nextCoords);
 		}
@@ -200,6 +231,43 @@ public class GameManager {
 		// apply move to matrix
 		board.updatePlayerCoords(player, playerCoords[player], nextCoords);
 		playerCoords[player] = nextCoords;
+	}
+
+	/**
+	 * Get if this move can be performed or not.
+	 * 
+	 * @param player
+	 *            chosen player
+	 * @param direction
+	 *            chosen direction
+	 * @return true if move is legal, false otherwise
+	 */
+	public boolean canMove(int player, int direction) {
+		// simulate move
+		int[] nextCoords = computeMove(player, direction);
+
+		// check first if coordinates are correct
+		if (!board.checkPlayerCoords(nextCoords[0], nextCoords[1])) {
+			return false;
+		}
+
+		// Check if move is legal
+		int moveDistance = Board.getMoveDistance(playerCoords[player][0], playerCoords[player][1], nextCoords[0],
+				nextCoords[1]);
+		boolean pathValid = (moveDistance <= GameCostants.CELLS_DISTANCE);
+
+		if (!pathValid) {
+			return false;
+		}
+
+		boolean checkWalls = board.checkBrokenWalls(playerCoords[player][0], playerCoords[player][1], nextCoords[0],
+				nextCoords[1]);
+
+		if (!checkWalls) {
+			return false;
+		}
+
+		return true;
 	}
 
 	/**
@@ -256,5 +324,15 @@ public class GameManager {
 		}
 
 		playerCoords[player] = coords;
+	}
+
+	/**
+	 * Get unused walls indexes. Caution: this list contains also incompatible
+	 * walls.
+	 * 
+	 * @return List of unused wall indexes
+	 */
+	public List<Integer> getAvailableWalls() {
+		return wallStock;
 	}
 }

@@ -312,7 +312,14 @@ public class Board {
 		return Board.isWallActive(matrix[y][x]);
 	}
 
-	private boolean isWallOccupied(int[][] wallCoords) {
+	/**
+	 * Check if wall is available on passed position.
+	 * 
+	 * @param wallCoords
+	 *            list of coordinates of walls
+	 * @return true if wall is available, false otherwise
+	 */
+	public boolean isWallOccupied(int[][] wallCoords) {
 		boolean available = true;
 
 		for (int i = 0; i < wallCoords.length && available; i++) {
@@ -328,19 +335,6 @@ public class Board {
 	}
 
 	/**
-	 * Check if wall is available on passed position.
-	 * 
-	 * @param wallIndex
-	 *            index of wall
-	 * @return true if wall is available, false otherwise
-	 */
-	public boolean isWallOccupied(int wallIndex) {
-		int[][] wallCoords = getWallCoords(wallIndex);
-
-		return isWallOccupied(wallCoords);
-	}
-
-	/**
 	 * Add a wall on matrix. This method controls if wall is already place on
 	 * matrix. If is already placed this method will throw a
 	 * WallUnavailableException.
@@ -350,24 +344,18 @@ public class Board {
 	 * @param player
 	 *            related player
 	 */
-	public void addWall(int index, int player) {
+	public void addWall(int wallCoords[][], int player) {
 		// Get coordinates
-		computeAddWall(index, player, this.matrix);
+		computeAddWall(wallCoords, player, this.matrix);
 	}
 
-	private int[][] computeAddWall(int index, int player, int matrix[][]) {
-		// Get coordinates
-		int[][] coords = getWallCoords(index);
-
-		if (!isWallOccupied(coords)) {
-			throw new WallUnavailableException();
-		}
-
+	private int[][] computeAddWall(int[][] wallCoords, int player, int matrix[][]) {
+		// Get code
 		int wallCode = Board.getWallCode(player);
 
-		for (int i = 0; i < coords.length; i++) {
-			int x = coords[i][0];
-			int y = coords[i][1];
+		for (int i = 0; i < wallCoords.length; i++) {
+			int x = wallCoords[i][0];
+			int y = wallCoords[i][1];
 
 			matrix[y][x] = wallCode;
 		}
@@ -439,17 +427,15 @@ public class Board {
 	 */
 	public boolean checkReachability(int wallIndex, int blueCoords[], int redCoords[]) {
 		int simulatedMatrix[][] = copyMatrix();
-		computeAddWall(wallIndex, GameManager.BLUE, simulatedMatrix);
-		
-		System.out.println("---Simulated matrix---");
-		System.out.println(toString(simulatedMatrix));
-		
+		int wallCoords[][] = getWallCoords(wallIndex);
+		computeAddWall(wallCoords, GameManager.BLUE, simulatedMatrix);
+
 		PathSearcher pathSearcher = new PathSearcher(simulatedMatrix, GameCostants.BLUE_WIN_Y);
 
-		System.out.println("Searching path for blue player...");
+		System.out.print("Searching path for blue player...");
 		boolean bluePath = pathSearcher.compute(blueCoords[0], blueCoords[1]);
 		System.out.println(bluePath ? "Found!" : "NOT found");
-		
+
 		System.out.print("Searching path for red player...");
 		boolean redPath = pathSearcher.compute(redCoords[0], redCoords[1]);
 		System.out.println(redPath ? "Found!" : "NOT found");
@@ -457,7 +443,8 @@ public class Board {
 		return (redPath && bluePath);
 	}
 
-	private String toString(int matrix[][]) {
+	@Override
+	public String toString() {
 		String s = "";
 
 		for (int i = 0; i < matrix.length; i++) {
@@ -490,10 +477,5 @@ public class Board {
 		}
 
 		return s;
-	}
-
-	@Override
-	public String toString() {
-		return toString(this.matrix);
 	}
 }

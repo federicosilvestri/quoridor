@@ -72,12 +72,13 @@ public class PathSearcher {
 	}
 
 	public boolean compute(int startX, int startY) {
-		bias = GameCostants.CELLS_DISTANCE;
-		
-		if (startY > destinationY) {
-			bias *= -1;
-		}
-		return pathAvailable(startX, startY);
+		return true;
+//		bias = GameCostants.CELLS_DISTANCE;
+//		
+//		if (startY > destinationY) {
+//			bias *= -1;
+//		}
+//		return pathAvailable(startX, startY);
 	}
 	
 	/**

@@ -31,6 +31,11 @@ public class GameCostants {
 	 * Number of max walls.
 	 */
 	public final static int MAX_WALLS = 10;
+	
+	/**
+	 * Number of total walls
+	 */
+	public final static int TOTAL_WALLS = 128;
 
 	/**
 	 * Initial red position using coordinates.
