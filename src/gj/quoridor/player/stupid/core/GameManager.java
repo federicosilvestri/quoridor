@@ -165,7 +165,7 @@ public class GameManager {
 			throw new WallUnavailableException();
 		}
 		
-		// Checks if with currently wall configuration destination of player is reachable
+		// Do not check if wall locks paths
 
 		// Add wall to Board Matrix
 		board.addWall(index, player);

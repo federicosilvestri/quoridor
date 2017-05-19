@@ -41,4 +41,14 @@ public class GameCostants {
 	 * Initial blue position using coordinates.
 	 */
 	public final static int[] INITIAL_BLUE_COORDS = new int[] { 8, 16 };
+	
+	/**
+	 * Blue winning Y coordinate.
+	 */
+	public static final int BLUE_WIN_Y = 0;
+	
+	/**
+	 * Red winning Y coordinate.
+	 */
+	public static final int RED_WIN_Y = 16;
 }

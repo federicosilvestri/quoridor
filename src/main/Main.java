@@ -1,21 +1,21 @@
 package main;
 
 import gj.quoridor.player.stupid.core.GameManager;
-import gj.quoridor.player.stupid.core.engine.PathSearcher;
 
 public class Main {
 
 	public static void main(String args[]) {
 		GameManager manager = new GameManager();
-		
+
+		manager.play(GameManager.RED, GameManager.PUT_WALL, 40);
+		manager.play(GameManager.RED, GameManager.PUT_WALL, 17);
 		manager.play(GameManager.RED, GameManager.PUT_WALL, 10);
-		PathSearcher ps = manager.board.buildPathSearcher();
-		
+		manager.play(GameManager.RED, GameManager.PUT_WALL, 12);
+		manager.play(GameManager.RED, GameManager.PUT_WALL, 21);
+		//manager.play(GameManager.RED, GameManager.PUT_WALL, 30);
+		//manager.play(GameManager.RED, GameManager.PUT_WALL, 15);
+
 		System.out.println(manager.board);
-		
-		boolean available = ps.pathAvailable(0, 0, 16, 0, 16);
-		
-		System.out.println("Path available= " + available);
-		
+		manager.board.checkReachability(14, new int[] {2,4}, new int[] {2, 4} );
 	}
 }

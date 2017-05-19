@@ -78,7 +78,7 @@ public class Board {
 		case EMPTY_WALL:
 			return false;
 		default:
-			throw new RuntimeException("Invalid Wall value!");
+			throw new RuntimeException("Invalid Wall value! " + wallValue);
 		}
 	}
 
@@ -167,6 +167,20 @@ public class Board {
 		}
 		matrix[initialRed[1]][initialRed[0]] = RED_POSITION;
 		matrix[initialBlue[1]][initialBlue[0]] = BLUE_POSITION;
+	}
+
+	// Matrix Management
+
+	private int[][] copyMatrix() {
+		int newMatrix[][] = new int[matrix.length][matrix[0].length];
+
+		for (int i = 0; i < newMatrix.length; i++) {
+			for (int j = 0; j < newMatrix[i].length; j++) {
+				newMatrix[i][j] = matrix[i][j];
+			}
+		}
+
+		return newMatrix;
 	}
 
 	// Cells management
@@ -338,6 +352,11 @@ public class Board {
 	 */
 	public void addWall(int index, int player) {
 		// Get coordinates
+		computeAddWall(index, player, this.matrix);
+	}
+
+	private int[][] computeAddWall(int index, int player, int matrix[][]) {
+		// Get coordinates
 		int[][] coords = getWallCoords(index);
 
 		if (!isWallOccupied(coords)) {
@@ -352,6 +371,8 @@ public class Board {
 
 			matrix[y][x] = wallCode;
 		}
+
+		return matrix;
 	}
 
 	/**
@@ -405,14 +426,38 @@ public class Board {
 
 	// Path and external object management
 
-	public PathSearcher buildPathSearcher() {
-		PathSearcher pathSearcher = new PathSearcher(matrix);
+	/**
+	 * Check if blue and red can reach winning destination after putting wall.
+	 * 
+	 * @param wallIndex
+	 *            wall to put for simulation
+	 * @param blueCoords
+	 *            blue coordinates
+	 * @param redCoords
+	 *            red coordinates
+	 * @return true if path is found, false otherwise
+	 */
+	public boolean checkReachability(int wallIndex, int blueCoords[], int redCoords[]) {
+		int simulatedMatrix[][] = copyMatrix();
+		computeAddWall(wallIndex, GameManager.BLUE, simulatedMatrix);
+		
+		System.out.println("---Simulated matrix---");
+		System.out.println(toString(simulatedMatrix));
+		
+		PathSearcher pathSearcher = new PathSearcher(simulatedMatrix, GameCostants.BLUE_WIN_Y);
 
-		return pathSearcher;
+		System.out.println("Searching path for blue player...");
+		boolean bluePath = pathSearcher.compute(blueCoords[0], blueCoords[1]);
+		System.out.println(bluePath ? "Found!" : "NOT found");
+		
+		System.out.print("Searching path for red player...");
+		boolean redPath = pathSearcher.compute(redCoords[0], redCoords[1]);
+		System.out.println(redPath ? "Found!" : "NOT found");
+
+		return (redPath && bluePath);
 	}
 
-	@Override
-	public String toString() {
+	private String toString(int matrix[][]) {
 		String s = "";
 
 		for (int i = 0; i < matrix.length; i++) {
@@ -437,7 +482,7 @@ public class Board {
 					s += "@";
 					break;
 				}
-				
+
 				s += " ";
 			}
 
@@ -445,5 +490,10 @@ public class Board {
 		}
 
 		return s;
+	}
+
+	@Override
+	public String toString() {
+		return toString(this.matrix);
 	}
 }

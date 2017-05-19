@@ -1,6 +1,7 @@
 package gj.quoridor.player.stupid.core.engine;
 
 import gj.quoridor.player.stupid.core.Board;
+import gj.quoridor.player.stupid.core.GameCostants;
 
 /**
  * This object is an implementation of researched algorithm to find if path is
@@ -18,49 +19,98 @@ public class PathSearcher {
 	private final int matrix[][];
 
 	/**
+	 * Right side.
+	 */
+	private final int r;
+
+	/**
+	 * Left side.
+	 */
+	private final int l;
+
+	/**
+	 * Top level.
+	 */
+	private final int top;
+
+	/**
+	 * Bottom level.
+	 */
+	private final int bottom;
+
+	/**
+	 * Destination Y
+	 */
+	private int destinationY;
+	
+	/**
+	 * Bias of computation
+	 */
+	private int bias;
+
+	/**
 	 * Create a new Path Searcher object.
 	 * 
 	 * @param simulatedMatrix
 	 *            matrix created by Board Object
 	 */
-	public PathSearcher(int simulatedMatrix[][]) {
+	public PathSearcher(int simulatedMatrix[][], int destinationY) {
 		this.matrix = simulatedMatrix;
+		r = matrix[0].length - 1;
+		l = 0;
+		top = matrix.length - 1;
+		bottom = 0;
+		setDestinationY(destinationY);
+	}
+	
+	public void setDestinationY(int destinationY) {
+		this.destinationY = destinationY;
 	}
 
 	private boolean isWallActive(int x, int y) {
 		return Board.isWallActive(matrix[y][x]);
 	}
 
+	public boolean compute(int startX, int startY) {
+		bias = GameCostants.CELLS_DISTANCE;
+		
+		if (startY > destinationY) {
+			bias *= -1;
+		}
+		return pathAvailable(startX, startY);
+	}
+	
 	/**
 	 * Search a path inside matrix
 	 * 
-	 * @param start
+	 * @param startX
 	 *            player x coordinate
 	 * @param l
 	 *            max left
 	 * @param r
 	 *            max right
-	 * @param y
+	 * @param startY
 	 *            player y coordinate
-	 * @param dy
+	 * @param destinationY
 	 *            destination y
 	 * @return true if path exists, false otherwise
 	 */
-	public boolean pathAvailable(int start, int l, int r, int y, int dy) {
-		if (y == dy) {
+	private boolean pathAvailable(int startX, int startY) {
+		if (startY == destinationY) {
 			// reached destination y, stop it
 			return true;
 		}
 
 		// left side iteration
-		boolean leftSide = leftSideIteration(start, l, r, y, dy);
+		boolean leftSide = leftSideIteration(startX, startY);
 		// right side iteration
-		boolean rightSide = rightSideIteration(start, l, r, y, dy);
+		boolean rightSide = rightSideIteration(startX, startY);	
 
 		return (leftSide || rightSide);
 	}
 
-	private boolean leftSideIteration(int start, int l, int r, int y, int dy) {
+	private boolean leftSideIteration(int start, int y) {
+		System.out.println("Left side iter: " + start + ", " + y);
 		boolean result;
 		int lx = start;
 		boolean foundVerticalWall = false;
@@ -83,13 +133,15 @@ public class PathSearcher {
 			result = false;
 		} else {
 			// found free space
-			result = pathAvailable(lx, l, r, y + 2, dy);
+			result = pathAvailable(lx, y + 2);
 		}
 
+		System.out.println("Scan finished, result=" + result);
 		return result;
 	}
 
-	private boolean rightSideIteration(int start, int l, int r, int y, int dy) {
+	private boolean rightSideIteration(int start, int y) {
+		System.out.println("Right side iter: " + start + ", " + y);
 		boolean result;
 		boolean foundVerticalWall;
 		int rx = start;
@@ -112,9 +164,10 @@ public class PathSearcher {
 			result = false;
 		} else {
 			// Found free space on top
-			result = pathAvailable(rx, l, r, y + 2, dy);
+			result = pathAvailable(rx, y + 2);
 		}
 
+		System.out.println("Scan finished, result=" + result);
 		return result;
 	}
 
