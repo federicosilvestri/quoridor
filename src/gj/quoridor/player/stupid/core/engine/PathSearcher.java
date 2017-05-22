@@ -2,6 +2,7 @@ package gj.quoridor.player.stupid.core.engine;
 
 import gj.quoridor.player.stupid.core.Board;
 import gj.quoridor.player.stupid.core.GameCostants;
+import main.Main;
 
 /**
  * This object is an implementation of researched algorithm to find if path is
@@ -42,11 +43,16 @@ public class PathSearcher {
 	 * Destination Y
 	 */
 	private int destinationY;
-	
+
 	/**
-	 * Bias of computation
+	 * Bias of computation direction (up and down)
 	 */
-	private int bias;
+	private int dBias;
+
+	/**
+	 * verbose
+	 */
+	public boolean verbose;
 
 	/**
 	 * Create a new Path Searcher object.
@@ -61,8 +67,19 @@ public class PathSearcher {
 		top = matrix.length - 1;
 		bottom = 0;
 		setDestinationY(destinationY);
+		verbose = false;
 	}
-	
+
+	private void log(String msg, int level) {
+		if (verbose) {
+			for (int i = 0; i < level; i++) {
+				System.out.print(" ");
+			}
+
+			System.out.println(level + ")" + msg);
+		}
+	}
+
 	public void setDestinationY(int destinationY) {
 		this.destinationY = destinationY;
 	}
@@ -72,15 +89,38 @@ public class PathSearcher {
 	}
 
 	public boolean compute(int startX, int startY) {
-		return true;
-//		bias = GameCostants.CELLS_DISTANCE;
-//		
-//		if (startY > destinationY) {
-//			bias *= -1;
-//		}
-//		return pathAvailable(startX, startY);
+		System.out.print("Check reachibility starting from " + startX + "," + startY + " to " + destinationY + ",X");
+		System.out.print(" dBias=" + dBias);
+		
+		int dBias;
+		// Check if you have to move forward or back
+		if (startY < destinationY) {
+			dBias = 1;
+		} else {
+			dBias = -1;
+		}
+
+		// if (startY > 0) {
+		// // First partition bottom
+		// log("========BOTTOM==========");
+		// bias *= -1;
+		// boolean bottom = pathAvailable(startX, startY);
+		// bias *= -1;
+		// log("=========UP===========");
+		// boolean up = false; //pathAvailable(startX, startY);
+		//
+		// return (bottom || up);
+		// }
+
+		long start = System.nanoTime();
+		boolean available = pathAvailable(startX, startY, 0, dBias);
+		long elapsed = System.nanoTime() - start;
+		System.out.println(" elapsed time: " + elapsed + "ns");
+		
+		return available;
+		
 	}
-	
+
 	/**
 	 * Search a path inside matrix
 	 * 
@@ -96,23 +136,32 @@ public class PathSearcher {
 	 *            destination y
 	 * @return true if path exists, false otherwise
 	 */
-	private boolean pathAvailable(int startX, int startY) {
+	private boolean pathAvailable(int startX, int startY, int i, int dBias) {
 		if (startY == destinationY) {
 			// reached destination y, stop it
 			return true;
 		}
 
+		// if (startY < 0 || startX < 0) {
+		//// System.out.println("Reached start of matrix, adjusting bias...");
+		//// // Adjust bias
+		//// bias *= -1;
+		////
+		//// // set coords to
+		//// startY = 0;
+		// }
+
 		// left side iteration
-		boolean leftSide = leftSideIteration(startX, startY);
+		boolean leftSide = leftSideIteration(startX, startY, i + 1, dBias);
 		// right side iteration
-		boolean rightSide = rightSideIteration(startX, startY);	
+		boolean rightSide = rightSideIteration(startX, startY, i + 1, dBias);
 
 		return (leftSide || rightSide);
 	}
 
-	private boolean leftSideIteration(int start, int y) {
-		System.out.println("Left side iter: " + start + ", " + y);
-		boolean result;
+	private boolean leftSideIteration(int start, int y, int i, int dBias) {
+		log("LFI::" + start + ", " + y, i);
+		
 		int lx = start;
 		boolean foundVerticalWall = false;
 
@@ -131,21 +180,21 @@ public class PathSearcher {
 
 		if (lx < l || foundVerticalWall) {
 			// top is all locked or left side is locked
-			result = false;
-		} else {
-			// found free space
-			result = pathAvailable(lx, y + 2);
+			return false;
 		}
 
-		System.out.println("Scan finished, result=" + result);
-		return result;
+		boolean topResult = pathAvailable(lx, y + (2 * dBias), i + 1, dBias);
+		boolean leftResult = leftSideIteration(lx - 2, y, i + 1, dBias);
+
+		return (topResult || leftResult);
 	}
 
-	private boolean rightSideIteration(int start, int y) {
-		System.out.println("Right side iter: " + start + ", " + y);
-		boolean result;
+	private boolean rightSideIteration(int start, int y, int i, int dBias) {
+		log("RTI:: " + start + ", " + y, i);
+
 		boolean foundVerticalWall;
 		int rx = start;
+
 		do {
 			int verticalWallIndex = rx + 1;
 
@@ -157,19 +206,20 @@ public class PathSearcher {
 			}
 
 			rx += 2;
-
 		} while (rx <= r && !foundVerticalWall && isWallActive(rx, y + 1));
 
 		if (rx > r || foundVerticalWall) {
 			// top is all locked
-			result = false;
-		} else {
-			// Found free space on top
-			result = pathAvailable(rx, y + 2);
+			return false;
 		}
 
-		System.out.println("Scan finished, result=" + result);
-		return result;
+		// Found free space on top
+		boolean topResult = pathAvailable(rx, y + (2 * dBias), i + 1, dBias);
+		// Continue to right part
+		boolean rightResult = pathAvailable(rx, y, i + 1, dBias);
+
+		log("RTI:: " + start + ", " + y + ", result=" + topResult, i);
+		return (topResult || rightResult);
 	}
 
 }

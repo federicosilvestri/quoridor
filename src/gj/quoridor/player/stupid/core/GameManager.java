@@ -323,6 +323,7 @@ public class GameManager {
 			throw new BadMoveException(player, coords);
 		}
 
+		board.updatePlayerCoords(player, playerCoords[player], coords);
 		playerCoords[player] = coords;
 	}
 

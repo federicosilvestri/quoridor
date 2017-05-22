@@ -1,7 +1,6 @@
 package gj.quoridor.player.stupid;
 
 import java.security.SecureRandom;
-import java.util.Arrays;
 import java.util.List;
 
 import gj.quoridor.player.Player;
@@ -20,11 +19,8 @@ public class StupidPlayer implements Player {
 		SecureRandom sr = new SecureRandom();
 		int[] action = actions.get(sr.nextInt(actions.size()));
 		
-		System.out.println("RETURN MOVE: " + Arrays.toString(action));
 		gameManager.play(player, action[0], action[1]);
-		System.out.println(gameManager.board);
-		
-		
+				
 		return action;
 	}
 
@@ -37,12 +33,7 @@ public class StupidPlayer implements Player {
 
 	@Override
 	public void tellMove(int[] move) {
-		System.out.println("TOLD MOVE: " + Arrays.toString(move));
-		
 		gameManager.play(opponent, move[0], move[1]);
-		System.out.println("---- GEN MATRIX ----");
-		System.out.println(gameManager.board);
-		System.out.println("---- END MATRIX ----");
 	}
 
 }

@@ -1,10 +1,10 @@
 package gj.quoridor.player.stupid.core;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import gj.quoridor.player.stupid.core.engine.PathSearcher;
-import gj.quoridor.player.stupid.exceptions.WallUnavailableException;
 
 public class Board {
 
@@ -432,15 +432,21 @@ public class Board {
 
 		PathSearcher pathSearcher = new PathSearcher(simulatedMatrix, GameCostants.BLUE_WIN_Y);
 
-		System.out.print("Searching path for blue player...");
+		// System.out.print("Searching path for blue player... " +
+		// Arrays.toString(blueCoords));
 		boolean bluePath = pathSearcher.compute(blueCoords[0], blueCoords[1]);
-		System.out.println(bluePath ? "Found!" : "NOT found");
+		// System.out.println(bluePath ? "Found!" : "NOT found");
 
-		System.out.print("Searching path for red player...");
+		pathSearcher.setDestinationY(GameCostants.RED_WIN_Y);
+		// System.out.print("Searching path for red player...");
 		boolean redPath = pathSearcher.compute(redCoords[0], redCoords[1]);
-		System.out.println(redPath ? "Found!" : "NOT found");
+		// System.out.println(redPath ? "Found!" : "NOT found");
 
 		return (redPath && bluePath);
+	}
+
+	public PathSearcher buildPathSearcher() {
+		return new PathSearcher(matrix, GameCostants.BLUE_WIN_Y);
 	}
 
 	@Override
@@ -448,13 +454,34 @@ public class Board {
 		String s = "";
 
 		for (int i = 0; i < matrix.length; i++) {
+			if (i == 0) {
+				s += "y|x";
+				for (int j = 0; j < matrix.length; j++) {
+					s += j;
+					
+					if (j > 9) {
+						s += " ";
+					} else {
+						s += "  ";
+					}
+				}
+
+				s += "\n";
+			}
+
+			if (i > 9) {
+				s += i + " ";
+			} else {
+				s += i + "  ";
+			}
+
 			for (int j = 0; j < matrix[i].length; j++) {
 				switch (matrix[i][j]) {
 				case EMPTY_WALL:
 					s += " ";
 					break;
 				case EMPTY_POSITION:
-					s += "O";
+					s += "•";
 					break;
 				case BLUE_POSITION:
 					s += "B";
@@ -470,7 +497,11 @@ public class Board {
 					break;
 				}
 
-				s += " ";
+				if (j > 9) {
+					s += "  ";
+				} else {
+					s += "  ";
+				}
 			}
 
 			s += "\n";
