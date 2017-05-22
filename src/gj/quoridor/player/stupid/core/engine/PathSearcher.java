@@ -91,7 +91,7 @@ public class PathSearcher {
 	public boolean compute(int startX, int startY) {
 		System.out.print("Check reachibility starting from " + startX + "," + startY + " to " + destinationY + ",X");
 		System.out.print(" dBias=" + dBias);
-		
+
 		int dBias;
 		// Check if you have to move forward or back
 		if (startY < destinationY) {
@@ -116,9 +116,9 @@ public class PathSearcher {
 		boolean available = pathAvailable(startX, startY, 0, dBias);
 		long elapsed = System.nanoTime() - start;
 		System.out.println(" elapsed time: " + elapsed + "ns");
-		
+
 		return available;
-		
+
 	}
 
 	/**
@@ -152,16 +152,18 @@ public class PathSearcher {
 		// }
 
 		// left side iteration
-		boolean leftSide = leftSideIteration(startX, startY, i + 1, dBias);
-		// right side iteration
-		boolean rightSide = rightSideIteration(startX, startY, i + 1, dBias);
+		boolean result = leftSideIteration(startX, startY, i + 1, dBias);
+		if (!result) {
+			// right side iteration
+			result = rightSideIteration(startX, startY, i + 1, dBias);
+		}
 
-		return (leftSide || rightSide);
+		return result;
 	}
 
 	private boolean leftSideIteration(int start, int y, int i, int dBias) {
 		log("LFI::" + start + ", " + y, i);
-		
+
 		int lx = start;
 		boolean foundVerticalWall = false;
 
@@ -183,10 +185,15 @@ public class PathSearcher {
 			return false;
 		}
 
-		boolean topResult = pathAvailable(lx, y + (2 * dBias), i + 1, dBias);
-		boolean leftResult = leftSideIteration(lx - 2, y, i + 1, dBias);
+		// Found free space on top, recursion!
+		boolean result = pathAvailable(lx, y + (2 * dBias), i + 1, dBias);
 
-		return (topResult || leftResult);
+		if (!result) {
+			// If not found, continue right search
+			result = leftSideIteration(lx - 2, y, i + 1, dBias);
+		}
+
+		return result;
 	}
 
 	private boolean rightSideIteration(int start, int y, int i, int dBias) {
@@ -213,13 +220,15 @@ public class PathSearcher {
 			return false;
 		}
 
-		// Found free space on top
-		boolean topResult = pathAvailable(rx, y + (2 * dBias), i + 1, dBias);
-		// Continue to right part
-		boolean rightResult = pathAvailable(rx, y, i + 1, dBias);
+		boolean result = pathAvailable(rx, y + (2 * dBias), i + 1, dBias);
 
-		log("RTI:: " + start + ", " + y + ", result=" + topResult, i);
-		return (topResult || rightResult);
+		if (!result) {
+			result = pathAvailable(rx, y, i + 1, dBias);
+		}
+
+		log("RTI:: " + start + ", " + y + ", result=" + result, i);
+
+		return result;
 	}
 
 }

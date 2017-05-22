@@ -21,8 +21,8 @@ public class Main {
 		 manager.play(GameManager.BLUE, GameManager.PUT_WALL, 43);
 		 manager.play(GameManager.BLUE, GameManager.PUT_WALL, 45);
 		 manager.play(GameManager.BLUE, GameManager.PUT_WALL, 22);
-		 //manager.play(GameManager.BLUE, GameManager.PUT_WALL, 15);
-		 manager.play(GameManager.BLUE, GameManager.PUT_WALL, 49);
+		 manager.play(GameManager.BLUE, GameManager.PUT_WALL, 15);
+//		 manager.play(GameManager.BLUE, GameManager.PUT_WALL, 49);
 		
 //		 manager.play(GameManager.BLUE, GameManager.PUT_WALL, 15);
 //		 manager.play(GameManager.BLUE, GameManager.PUT_WALL, 13);
