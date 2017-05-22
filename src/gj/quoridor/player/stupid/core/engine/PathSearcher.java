@@ -167,8 +167,8 @@ public class PathSearcher {
 		int lx = start;
 		boolean foundVerticalWall = false;
 
-		while (lx >= l && !foundVerticalWall && isWallActive(lx, y + 1)) {
-			int verticalWallIndex = lx - 1;
+		while (lx >= l && !foundVerticalWall && isWallActive(lx, y + 1 * dBias)) {
+			int verticalWallIndex = lx - 1 * dBias;
 
 			if (verticalWallIndex < l) {
 				// we don't have to check anymore
@@ -190,7 +190,10 @@ public class PathSearcher {
 
 		if (!result) {
 			// If not found, continue right search
-			result = leftSideIteration(lx - 2, y, i + 1, dBias);
+			// But first check if there is a wall
+			if (!isWallActive(lx - 1, y)) {
+				result = leftSideIteration(lx - 2, y, i + 1, dBias);
+			}
 		}
 
 		return result;

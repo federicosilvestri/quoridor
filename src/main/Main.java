@@ -22,7 +22,7 @@ public class Main {
 		 manager.play(GameManager.BLUE, GameManager.PUT_WALL, 45);
 		 manager.play(GameManager.BLUE, GameManager.PUT_WALL, 22);
 		 manager.play(GameManager.BLUE, GameManager.PUT_WALL, 15);
-//		 manager.play(GameManager.BLUE, GameManager.PUT_WALL, 49);
+//		 manager.play(GameManager.BLUE, GameManager.PUT_WALL, 1);
 		
 //		 manager.play(GameManager.BLUE, GameManager.PUT_WALL, 15);
 //		 manager.play(GameManager.BLUE, GameManager.PUT_WALL, 13);
@@ -41,13 +41,13 @@ public class Main {
 //		manager.play(GameManager.RED, GameManager.PUT_WALL, 22);
 //		manager.play(GameManager.RED, GameManager.PUT_WALL, 46);
 
-		int coord[] = new int[] { 16, 0 };
+		int coord[] = new int[] { 8, 0 };
 		manager.setPlayerCoords(GameManager.RED, coord);
 
 		System.out.println(manager.board);
 
 		PathSearcher ps = manager.board.buildPathSearcher();
-//		 ps.verbose = true;
+		 ps.verbose = true;
 		ps.setDestinationY(16);
 		System.out.println("Reachibility: " + ps.compute(coord[0], coord[1]));
 	}
