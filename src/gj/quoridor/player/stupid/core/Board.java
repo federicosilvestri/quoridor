@@ -486,6 +486,10 @@ public class Board {
 		return new Board(matrix);
 	}
 
+	int[][] getMatrix() {
+		return matrix;
+	}
+	
 	@Override
 	public String toString() {
 		String s = "";

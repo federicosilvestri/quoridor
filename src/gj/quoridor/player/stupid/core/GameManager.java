@@ -3,6 +3,7 @@ package gj.quoridor.player.stupid.core;
 import java.util.LinkedList;
 import java.util.List;
 
+import gj.quoridor.player.stupid.core.engine.Node;
 import gj.quoridor.player.stupid.exceptions.BadMoveException;
 import gj.quoridor.player.stupid.exceptions.InvalidDirection;
 import gj.quoridor.player.stupid.exceptions.OutOfStockWallException;
@@ -350,7 +351,21 @@ public class GameManager {
 	 * @return true if finished, false otherwise
 	 */
 	public boolean isFinished() {
-		return (playerCoords[RED][1] == GameCostants.RED_WIN_Y || playerCoords[BLUE][1] == GameCostants.BLUE_WIN_Y);
+		return (getWinner() != -1);
+	}
+	
+	/**
+	 * Get winner of game.
+	 * @return return -1 if there are no winner
+	 */
+	public int getWinner() {
+		if (playerCoords[RED][1] == GameCostants.RED_WIN_Y) {
+			return RED;
+		} else if (playerCoords[BLUE][1] == GameCostants.BLUE_WIN_Y) {
+			return BLUE;
+		}
+		
+		return -1;
 	}
 
 	/**
@@ -361,5 +376,16 @@ public class GameManager {
 	public GameManager getSimulation() {
 		return new GameManager(playerCoords.clone(), wallAvailability.clone(), new LinkedList<Integer>(wallStock),
 				moveAvailability.clone(), board.copy());
+	}
+
+	/**
+	 * Create node.
+	 * 
+	 * @return instance of node.
+	 */
+	public Node createNode() {
+		Node node = new Node(board.getMatrix(), playerCoords, wallAvailability);
+
+		return node;
 	}
 }
