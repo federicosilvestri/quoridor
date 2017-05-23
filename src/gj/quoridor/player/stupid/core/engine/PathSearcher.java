@@ -1,8 +1,10 @@
 package gj.quoridor.player.stupid.core.engine;
 
+import java.util.Iterator;
+import java.util.LinkedList;
+
 import gj.quoridor.player.stupid.core.Board;
 import gj.quoridor.player.stupid.core.GameCostants;
-import main.Main;
 
 /**
  * This object is an implementation of researched algorithm to find if path is
@@ -15,39 +17,14 @@ import main.Main;
 public class PathSearcher {
 
 	/**
-	 * Simulated matrix of Board Object.
+	 * Board object
 	 */
-	private final int matrix[][];
+	private final Board board;
 
 	/**
-	 * Right side.
-	 */
-	private final int r;
-
-	/**
-	 * Left side.
-	 */
-	private final int l;
-
-	/**
-	 * Top level.
-	 */
-	private final int top;
-
-	/**
-	 * Bottom level.
-	 */
-	private final int bottom;
-
-	/**
-	 * Destination Y
+	 * Destination to reach.
 	 */
 	private int destinationY;
-
-	/**
-	 * Bias of computation direction (up and down)
-	 */
-	private int dBias;
 
 	/**
 	 * verbose
@@ -60,23 +37,19 @@ public class PathSearcher {
 	 * @param simulatedMatrix
 	 *            matrix created by Board Object
 	 */
-	public PathSearcher(int simulatedMatrix[][], int destinationY) {
-		this.matrix = simulatedMatrix;
-		r = matrix[0].length - 1;
-		l = 0;
-		top = matrix.length - 1;
-		bottom = 0;
-		setDestinationY(destinationY);
+	public PathSearcher(int destinationY, Board board) {
+		this.destinationY = destinationY;
+		this.board = board;
 		verbose = false;
 	}
 
-	private void log(String msg, int level) {
+	private void log(String msg, boolean toNewLine) {
 		if (verbose) {
-			for (int i = 0; i < level; i++) {
-				System.out.print(" ");
+			if (toNewLine) {
+				System.out.print(msg + "\nPS:");
+			} else {
+				System.out.print(msg);
 			}
-
-			System.out.println(level + ")" + msg);
 		}
 	}
 
@@ -84,154 +57,90 @@ public class PathSearcher {
 		this.destinationY = destinationY;
 	}
 
-	private boolean isWallActive(int x, int y) {
-		return Board.isWallActive(matrix[y][x]);
-	}
+	private LinkedList<Integer>[] generateAdjList() {
+		LinkedList<Integer>[] adj = new LinkedList[GameCostants.CELL_NUMBER];
 
-	public boolean compute(int startX, int startY) {
-		System.out.print("Check reachibility starting from " + startX + "," + startY + " to " + destinationY + ",X");
-		System.out.print(" dBias=" + dBias);
-
-		int dBias;
-		// Check if you have to move forward or back
-		if (startY < destinationY) {
-			dBias = 1;
-		} else {
-			dBias = -1;
+		for (int i = 0; i < adj.length; i++) {
+			adj[i] = new LinkedList<>();
 		}
 
-		// if (startY > 0) {
-		// // First partition bottom
-		// log("========BOTTOM==========");
-		// bias *= -1;
-		// boolean bottom = pathAvailable(startX, startY);
-		// bias *= -1;
-		// log("=========UP===========");
-		// boolean up = false; //pathAvailable(startX, startY);
-		//
-		// return (bottom || up);
-		// }
+		for (int i = 0; i < GameCostants.CELL_NUMBER; i++) {
+			for (int j = 0; j < GameCostants.CELL_NUMBER; j++) {
+				// don't check equals
+				if (i == j) {
+					continue;
+				}
 
-		long start = System.nanoTime();
-		boolean available = pathAvailable(startX, startY, 0, dBias);
-		long elapsed = System.nanoTime() - start;
-		System.out.println(" elapsed time: " + elapsed + "ns");
+				int a[] = board.getCellCoord(i);
+				int b[] = board.getCellCoord(j);
+				int distance = Board.getMoveDistance(a[0], a[1], b[0], b[1]);
 
-		return available;
+				if (distance < 3 && board.checkBrokenWalls(a[0], a[1], b[0], b[1])) {
+					adj[i].add(j);
+				}
+			}
+		}
 
+		return adj;
 	}
 
 	/**
-	 * Search a path inside matrix
+	 * Compute destination.
 	 * 
 	 * @param startX
-	 *            player x coordinate
-	 * @param l
-	 *            max left
-	 * @param r
-	 *            max right
+	 *            start x
 	 * @param startY
-	 *            player y coordinate
-	 * @param destinationY
-	 *            destination y
-	 * @return true if path exists, false otherwise
+	 *            start y
+	 * @return true if destination exists, false otherwise
 	 */
-	private boolean pathAvailable(int startX, int startY, int i, int dBias) {
-		if (startY == destinationY) {
-			// reached destination y, stop it
-			return true;
-		}
+	public boolean compute(int startX, int startY) {
+		int startIndex = board.getCellIndex(startX, startY);
+		int endIndex = board.getCellIndex(8, destinationY);
 
-		// if (startY < 0 || startX < 0) {
-		//// System.out.println("Reached start of matrix, adjusting bias...");
-		//// // Adjust bias
-		//// bias *= -1;
-		////
-		//// // set coords to
-		//// startY = 0;
-		// }
+		log("Generating adjacency matrix...", false);
+		LinkedList<Integer>[] adj = generateAdjList();
+		log("done", true);
+		log("Checking path from [" + startX + "," + startY + "] to [X," + destinationY + "] ... ", false);
+		boolean available = isReacheable(startIndex, endIndex, adj);
+		log("done", true);
 
-		// left side iteration
-		boolean result = leftSideIteration(startX, startY, i + 1, dBias);
-		if (!result) {
-			// right side iteration
-			result = rightSideIteration(startX, startY, i + 1, dBias);
-		}
-
-		return result;
+		return available;
 	}
 
-	private boolean leftSideIteration(int start, int y, int i, int dBias) {
-		log("LFI::" + start + ", " + y, i);
+	private boolean isDestination(int index) {
+		int coord[] = board.getCellCoord(index);
 
-		int lx = start;
-		boolean foundVerticalWall = false;
-
-		while (lx >= l && !foundVerticalWall && isWallActive(lx, y + 1 * dBias)) {
-			int verticalWallIndex = lx - 1 * dBias;
-
-			if (verticalWallIndex < l) {
-				// we don't have to check anymore
-				foundVerticalWall = false;
-			} else {
-				foundVerticalWall = isWallActive(verticalWallIndex, y);
-			}
-
-			lx -= 2;
-		}
-
-		if (lx < l || foundVerticalWall) {
-			// top is all locked or left side is locked
-			return false;
-		}
-
-		// Found free space on top, recursion!
-		boolean result = pathAvailable(lx, y + (2 * dBias), i + 1, dBias);
-
-		if (!result) {
-			// If not found, continue right search
-			// But first check if there is a wall
-			if (!isWallActive(lx - 1, y)) {
-				result = leftSideIteration(lx - 2, y, i + 1, dBias);
-			}
-		}
-
-		return result;
+		return (destinationY == coord[1]);
 	}
 
-	private boolean rightSideIteration(int start, int y, int i, int dBias) {
-		log("RTI:: " + start + ", " + y, i);
+	private boolean isReacheable(int start, int dest, LinkedList<Integer>[] adj) {
+		boolean visited[] = new boolean[GameCostants.CELL_NUMBER];
+		LinkedList<Integer> queue = new LinkedList<Integer>();
 
-		boolean foundVerticalWall;
-		int rx = start;
+		visited[start] = true;
+		queue.add(start);
 
-		do {
-			int verticalWallIndex = rx + 1;
+		Iterator<Integer> nbIterator;
+		while (!queue.isEmpty()) {
+			start = queue.poll();
+			int n;
+			nbIterator = adj[start].listIterator();
 
-			if (verticalWallIndex > r) {
-				// we don't have to check anymore
-				foundVerticalWall = false;
-			} else {
-				foundVerticalWall = isWallActive(verticalWallIndex, y);
+			while (nbIterator.hasNext()) {
+				n = nbIterator.next();
+
+				if (isDestination(n)) {
+					return true;
+				}
+
+				if (!visited[n]) {
+					visited[n] = true;
+					queue.add(n);
+				}
 			}
-
-			rx += 2;
-		} while (rx <= r && !foundVerticalWall && isWallActive(rx, y + 1));
-
-		if (rx > r || foundVerticalWall) {
-			// top is all locked
-			return false;
 		}
 
-		boolean result = pathAvailable(rx, y + (2 * dBias), i + 1, dBias);
-
-		if (!result) {
-			result = pathAvailable(rx, y, i + 1, dBias);
-		}
-
-		log("RTI:: " + start + ", " + y + ", result=" + result, i);
-
-		return result;
+		return false;
 	}
 
 }
