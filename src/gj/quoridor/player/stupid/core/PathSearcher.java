@@ -1,10 +1,7 @@
-package gj.quoridor.player.stupid.core.engine;
+package gj.quoridor.player.stupid.core;
 
 import java.util.Iterator;
 import java.util.LinkedList;
-
-import gj.quoridor.player.stupid.core.Board;
-import gj.quoridor.player.stupid.core.GameCostants;
 
 /**
  * This object is an implementation of researched algorithm to find if path is

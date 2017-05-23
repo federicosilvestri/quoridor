@@ -108,6 +108,16 @@ public class GameManager {
 				GameCostants.INITIAL_BLUE_COORDS);
 	}
 
+	private GameManager(int[][] playerCoords, int[] wallAvailability, LinkedList<Integer> wallStock,
+			int[] moveAvailability, Board board) {
+		super();
+		this.playerCoords = playerCoords;
+		this.wallAvailability = wallAvailability;
+		this.wallStock = wallStock;
+		this.moveAvailability = moveAvailability;
+		this.board = board;
+	}
+
 	/**
 	 * Get player coordinates.
 	 * 
@@ -332,5 +342,24 @@ public class GameManager {
 	 */
 	public List<Integer> getAvailableWalls() {
 		return wallStock;
+	}
+
+	/**
+	 * Know if game is finished or not.
+	 * 
+	 * @return true if finished, false otherwise
+	 */
+	public boolean isFinished() {
+		return (playerCoords[RED][1] == GameCostants.RED_WIN_Y || playerCoords[BLUE][1] == GameCostants.BLUE_WIN_Y);
+	}
+
+	/**
+	 * Get simulation of this Game.
+	 * 
+	 * @return Game Manager Object
+	 */
+	public GameManager getSimulation() {
+		return new GameManager(playerCoords.clone(), wallAvailability.clone(), new LinkedList<Integer>(wallStock),
+				moveAvailability.clone(), board.copy());
 	}
 }

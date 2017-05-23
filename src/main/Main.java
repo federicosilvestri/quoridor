@@ -5,7 +5,8 @@ import java.util.Scanner;
 
 import gj.quoridor.player.stupid.core.GameCostants;
 import gj.quoridor.player.stupid.core.GameManager;
-import gj.quoridor.player.stupid.core.engine.PathSearcher;
+import gj.quoridor.player.stupid.core.PathSearcher;
+import gj.quoridor.player.stupid.core.engine.PlayerEngine;
 
 public class Main {
 	private static SecureRandom sr;
@@ -65,7 +66,10 @@ public class Main {
 		// System.out.println("Reachibility: " + ps.compute(coord[0],
 		// coord[1]));
 
-		start();
+		// start();
+
+		PlayerEngine pe = new PlayerEngine(manager, GameManager.BLUE);
+		pe.start();
 	}
 
 	private static void start() {
@@ -110,8 +114,7 @@ public class Main {
 		coord[0] = Math.abs((sr.nextInt() % 5) * 2);
 		coord[1] = Math.abs((sr.nextInt() % 5) * 2);
 
-		
-		 return coord;
+		return coord;
 	}
 
 	private static int getRandomPlayer() {

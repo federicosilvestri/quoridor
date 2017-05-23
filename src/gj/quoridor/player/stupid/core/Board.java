@@ -3,8 +3,6 @@ package gj.quoridor.player.stupid.core;
 import java.util.ArrayList;
 import java.util.List;
 
-import gj.quoridor.player.stupid.core.engine.PathSearcher;
-
 public class Board {
 
 	/**
@@ -482,6 +480,10 @@ public class Board {
 
 	public PathSearcher buildPathSearcher() {
 		return new PathSearcher(GameCostants.BLUE_WIN_Y, this);
+	}
+	
+	public Board copy() {
+		return new Board(matrix);
 	}
 
 	@Override
