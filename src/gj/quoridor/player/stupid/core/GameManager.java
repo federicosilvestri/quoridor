@@ -177,28 +177,29 @@ public class GameManager {
 		if (wallAvailability[player] < 1) {
 			throw new OutOfStockWallException(player, index);
 		}
-		
+
 		// Get wall coords
 		int[][] wallCoords = board.getWallCoords(index);
 
 		// check if wall can be positioned in current index
 		if (board.isWallOccupied(wallCoords)) {
-			throw new WallUnavailableException();
+			throw new WallUnavailableException(wallCoords, index);
 		}
 
 		// check if wall locks paths
-//		boolean reachibility = board.checkReachability(index, playerCoords[BLUE], playerCoords[RED]);
-//		
-//		if (!reachibility) {
-//			throw new RuntimeException("No paths available for players");
-//		}
+		// boolean reachibility = board.checkReachability(index,
+		// playerCoords[BLUE], playerCoords[RED]);
+		//
+		// if (!reachibility) {
+		// throw new RuntimeException("No paths available for players");
+		// }
 
 		// Add wall to Board Matrix
 		board.addWall(wallCoords, player);
 
 		// Remove index from stock
 		wallStock.remove(wallStock.indexOf(index));
-		
+
 		// Remove from stock
 		wallAvailability[player] -= 1;
 	}
@@ -263,11 +264,7 @@ public class GameManager {
 		boolean checkWalls = board.checkBrokenWalls(playerCoords[player][0], playerCoords[player][1], nextCoords[0],
 				nextCoords[1]);
 
-		if (!checkWalls) {
-			return false;
-		}
-
-		return true;
+		return checkWalls;
 	}
 
 	/**

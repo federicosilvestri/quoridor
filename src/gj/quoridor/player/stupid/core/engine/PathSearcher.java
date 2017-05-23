@@ -59,9 +59,10 @@ public class PathSearcher {
 
 	private LinkedList<Integer>[] generateAdjList() {
 		LinkedList<Integer>[] adj = new LinkedList[GameCostants.CELL_NUMBER];
-
+		
 		for (int i = 0; i < adj.length; i++) {
-			adj[i] = new LinkedList<>();
+			LinkedList<Integer> a = new LinkedList<>();
+			adj[i] = a;
 		}
 
 		for (int i = 0; i < GameCostants.CELL_NUMBER; i++) {

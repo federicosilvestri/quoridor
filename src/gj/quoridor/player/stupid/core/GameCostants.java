@@ -56,4 +56,9 @@ public class GameCostants {
 	 * Red winning Y coordinate.
 	 */
 	public static final int RED_WIN_Y = 16;
+
+	/**
+	 * Number of cells
+	 */
+	public static final int CELL_NUMBER = 81;
 }

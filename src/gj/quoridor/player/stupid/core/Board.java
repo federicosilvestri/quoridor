@@ -1,7 +1,6 @@
 package gj.quoridor.player.stupid.core;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 import gj.quoridor.player.stupid.core.engine.PathSearcher;
@@ -169,18 +168,14 @@ public class Board {
 		matrix[initialBlue[1]][initialBlue[0]] = BLUE_POSITION;
 	}
 
-	// Matrix Management
-
-	private int[][] copyMatrix() {
-		int newMatrix[][] = new int[matrix.length][matrix[0].length];
-
-		for (int i = 0; i < newMatrix.length; i++) {
-			for (int j = 0; j < newMatrix[i].length; j++) {
-				newMatrix[i][j] = matrix[i][j];
+	private Board(int[][] matrix2) {
+		matrix = new int[matrix2.length][matrix2[0].length];
+		
+		for (int i = 0; i < matrix2.length; i++) {
+			for (int j = 0; j < matrix2[i].length; j++) {
+				matrix[i][j] = matrix2[i][j];
 			}
 		}
-
-		return newMatrix;
 	}
 
 	// Cells management
@@ -210,6 +205,48 @@ public class Board {
 	}
 
 	/**
+	 * Get cell coordinates by index
+	 * 
+	 * @param index
+	 *            index of cell
+	 * @return array of two value, x and y
+	 */
+	public int[] getCellCoord(int index) {
+		int coords[] = new int[2];
+
+		int m = (matrix.length + 1) / 2;
+		coords[0] = 2 * (index % m);
+		coords[1] = (index / m) * 2;
+
+		return coords;
+	}
+
+	/**
+	 * Get cell index by coordinates
+	 * 
+	 * @param x
+	 *            x coordinate
+	 * @param y
+	 *            y coordinate
+	 * @return index of cell
+	 */
+	public int getCellIndex(int x, int y) {
+		int index = 0;
+
+		for (int i = 0; i < matrix.length; i += 2) {
+			for (int j = 0; j < matrix.length; j += 2) {
+				if (j == x && i == y) {
+					return index;
+				}
+
+				index += 1;
+			}
+		}
+
+		throw new RuntimeException("Conversion between coordinates and cell index gone wrong!");
+	}
+
+	/**
 	 * Update player coordinates.
 	 * 
 	 * @param player
@@ -229,6 +266,7 @@ public class Board {
 	}
 
 	// Walls Management
+
 	/**
 	 * 
 	 * Get coordinates of adjacent walls, related to passed cell coordinates.
@@ -426,27 +464,24 @@ public class Board {
 	 * @return true if path is found, false otherwise
 	 */
 	public boolean checkReachability(int wallIndex, int blueCoords[], int redCoords[]) {
-		int simulatedMatrix[][] = copyMatrix();
 		int wallCoords[][] = getWallCoords(wallIndex);
-		computeAddWall(wallCoords, GameManager.BLUE, simulatedMatrix);
 
-		PathSearcher pathSearcher = new PathSearcher(simulatedMatrix, GameCostants.BLUE_WIN_Y);
+		// Create simulated environment
+		Board simulatedBoard;
 
-		// System.out.print("Searching path for blue player... " +
-		// Arrays.toString(blueCoords));
+		simulatedBoard = new Board(this.matrix);
+
+		computeAddWall(wallCoords, GameManager.BLUE, simulatedBoard.matrix);
+		PathSearcher pathSearcher = new PathSearcher(GameCostants.BLUE_WIN_Y, simulatedBoard);
 		boolean bluePath = pathSearcher.compute(blueCoords[0], blueCoords[1]);
-		// System.out.println(bluePath ? "Found!" : "NOT found");
-
 		pathSearcher.setDestinationY(GameCostants.RED_WIN_Y);
-		// System.out.print("Searching path for red player...");
 		boolean redPath = pathSearcher.compute(redCoords[0], redCoords[1]);
-		// System.out.println(redPath ? "Found!" : "NOT found");
 
 		return (redPath && bluePath);
 	}
 
 	public PathSearcher buildPathSearcher() {
-		return new PathSearcher(matrix, GameCostants.BLUE_WIN_Y);
+		return new PathSearcher(GameCostants.BLUE_WIN_Y, this);
 	}
 
 	@Override
@@ -458,7 +493,7 @@ public class Board {
 				s += "y|x";
 				for (int j = 0; j < matrix.length; j++) {
 					s += j;
-					
+
 					if (j > 9) {
 						s += " ";
 					} else {
