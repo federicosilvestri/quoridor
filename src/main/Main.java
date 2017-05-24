@@ -69,7 +69,7 @@ public class Main {
 		// start();
 
 		PlayerEngine pe = new PlayerEngine(manager, GameManager.BLUE);
-		pe.start();
+		pe.debug();
 	}
 
 	private static void start() {

@@ -1,4 +1,4 @@
-package gj.quoridor.player.stupid.core.engine;
+package gj.quoridor.player.stupid.core.engine.tree;
 
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -57,8 +57,9 @@ public class GameTree implements Serializable {
 	 *            Game Manager object
 	 * @return Added node
 	 */
-	public Node addChild(Node parent, GameManager gm) {
+	public Node addChild(Node parent, GameManager gm, int[] action) {
 		Node node = gm.createNode();
+		node.setAction(action);
 		node.parent = parent;
 		parent.childs.add(node);
 
@@ -69,6 +70,10 @@ public class GameTree implements Serializable {
 		return new BProagationIterator(n);
 	}
 
+	public Iterator<Node> getIterator() {
+		return new GameTreeIterator(root);
+	}
+	
 	/**
 	 * Get Tree root.
 	 * 
@@ -85,5 +90,19 @@ public class GameTree implements Serializable {
 		oos.writeObject(this);
 		oos.close();
 		fos.close();
+	}
+	
+	@Override
+	public String toString() {
+		String s = "";
+		
+		Iterator<Node> it = getIterator();
+		
+		while (it.hasNext()) {
+			Node n = it.next();
+			System.out.println(n);
+		}
+		
+		return s;
 	}
 }

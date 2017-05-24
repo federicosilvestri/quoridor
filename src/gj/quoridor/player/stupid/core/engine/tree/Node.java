@@ -1,6 +1,7 @@
-package gj.quoridor.player.stupid.core.engine;
+package gj.quoridor.player.stupid.core.engine.tree;
 
 import java.io.Serializable;
+import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -45,6 +46,11 @@ public class Node implements Serializable {
 	 * Walls available.
 	 */
 	private final int[] walls;
+	
+	/**
+	 * Move that brings here.
+	 */
+	private int[] action;
 
 	/**
 	 * ROOT Node instance.
@@ -79,7 +85,7 @@ public class Node implements Serializable {
 	 * 
 	 * @return integer number of weight
 	 */
-	public int getWeigth() {
+	public int getWeight() {
 		return weigth;
 	}
 
@@ -124,4 +130,19 @@ public class Node implements Serializable {
 		return walls;
 	}
 
+	
+	public void setAction(int move[]){
+		this.action = move;
+	}
+	
+	public int[] getAction() {
+		return action;
+	}
+	
+	@Override
+	public String toString() {
+		String s = "";
+		s += "Action: " + Arrays.toString(action);
+		return s;
+	}
 }

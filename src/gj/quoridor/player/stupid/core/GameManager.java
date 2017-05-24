@@ -3,7 +3,7 @@ package gj.quoridor.player.stupid.core;
 import java.util.LinkedList;
 import java.util.List;
 
-import gj.quoridor.player.stupid.core.engine.Node;
+import gj.quoridor.player.stupid.core.engine.tree.Node;
 import gj.quoridor.player.stupid.exceptions.BadMoveException;
 import gj.quoridor.player.stupid.exceptions.InvalidDirection;
 import gj.quoridor.player.stupid.exceptions.OutOfStockWallException;
