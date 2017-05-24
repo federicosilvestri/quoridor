@@ -25,6 +25,7 @@ public class PlayerEngine implements Runnable {
 	 * If process is finished or not.
 	 */
 	private boolean finished;
+	private boolean stop;
 
 	private GameTree gameTree;
 
@@ -36,7 +37,7 @@ public class PlayerEngine implements Runnable {
 	public PlayerEngine(GameManager manager, int player) {
 		this.manager = manager;
 		this.player = player;
-		maxDepth = 1;
+		maxDepth = 2;
 		gameTree = new GameTree();
 	}
 
@@ -63,17 +64,22 @@ public class PlayerEngine implements Runnable {
 
 		while (!finished) {
 			try {
-				Thread.sleep(1000);
+				Thread.sleep(5000);
 			} catch (InterruptedException e) {
 				System.exit(-1);
 			}
 
 			long elapsed = System.nanoTime() - startTime;
-			System.out.println("Montecarlo Tree creation in progress. Elapsed time:" + (elapsed / Math.pow(10, 9)) + "s");
+			int seconds = (int) (elapsed / Math.pow(10, 9));
+			System.out.println("Montecarlo Tree creation in progress. Elapsed time:" + seconds + "s");
+			
+			if (seconds > 30) {
+				System.out.println("Stopping creation.. time exceeded");
+				stop = true;
+			}
 		}
 		
 		System.out.println("Creation and backpropagation ended. Result: ");
-		System.out.println(gameTree);
 		//System.out.println(getResult());
 		new TreeViewer(gameTree);
 
@@ -90,7 +96,8 @@ public class PlayerEngine implements Runnable {
 
 	private void computeActions(Node node, GameManager manager, int depth) {
 		// check depth
-		if (depth > maxDepth) {
+		
+		if (depth > maxDepth || stop) {
 			// here we need to setup a back propagation weight
 			// but weight must be calculated in base of distance
 			// to victory
@@ -129,6 +136,7 @@ public class PlayerEngine implements Runnable {
 	@Override
 	public void run() {
 		finished = false;
+		stop = false;
 		computeActions(gameTree.getRoot(), manager, 0);
 		finished = true;
 	}
