@@ -57,9 +57,8 @@ public class GameTree implements Serializable {
 	 *            Game Manager object
 	 * @return Added node
 	 */
-	public Node addChild(Node parent, GameManager gm, int[] action) {
-		Node node = gm.createNode();
-		node.setAction(action);
+	public synchronized Node addChild(Node parent, GameManager gm, int[] action) {
+		Node node = new Node(action);
 		node.parent = parent;
 		parent.childs.add(node);
 

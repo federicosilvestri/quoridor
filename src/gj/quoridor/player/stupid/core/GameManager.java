@@ -377,15 +377,4 @@ public class GameManager {
 		return new GameManager(playerCoords.clone(), wallAvailability.clone(), new LinkedList<Integer>(wallStock),
 				moveAvailability.clone(), board.copy());
 	}
-
-	/**
-	 * Create node.
-	 * 
-	 * @return instance of node.
-	 */
-	public Node createNode() {
-		Node node = new Node(board.getMatrix(), playerCoords, wallAvailability);
-
-		return node;
-	}
 }

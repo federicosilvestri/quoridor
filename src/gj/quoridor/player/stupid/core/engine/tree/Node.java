@@ -30,32 +30,17 @@ public class Node implements Serializable {
 	/**
 	 * Weight of this node.
 	 */
-	private int weigth;
-
-	/**
-	 * Matrix.
-	 */
-	private final int[][] matrix;
-
-	/**
-	 * Player coordinates.
-	 */
-	private final int[][] playerCoords;
-
-	/**
-	 * Walls available.
-	 */
-	private final int[] walls;
+	private int weight;
 	
 	/**
 	 * Move that brings here.
 	 */
-	private int[] action;
+	private final int[] action;
 
 	/**
 	 * ROOT Node instance.
 	 */
-	public static final Node DEFAULT_ROOT = new Node(null, null, null, true);
+	public static final Node DEFAULT_ROOT = new Node(null, true);
 
 	/**
 	 * Create a new node.
@@ -67,16 +52,14 @@ public class Node implements Serializable {
 	 * @param walls
 	 *            walls available
 	 */
-	public Node(int[][] matrix, int[][] playerCoords, int[] walls) {
-		this(matrix, playerCoords, walls, false);
+	public Node(int action[]) {
+		this(action, false);
 	}
 
-	private Node(int[][] matrix, int[][] playerCoords, int[] walls, boolean root) {
-		this.matrix = matrix;
-		this.playerCoords = playerCoords;
-		this.walls = walls;
+	private Node(int[] action, boolean root) {
 		this.childs = new LinkedList<>();
 		this.parent = null;
+		this.action = action;
 		this.root = root;
 	}
 
@@ -86,7 +69,7 @@ public class Node implements Serializable {
 	 * @return integer number of weight
 	 */
 	public int getWeight() {
-		return weigth;
+		return weight;
 	}
 
 	public void setParent(Node parent) {
@@ -100,39 +83,7 @@ public class Node implements Serializable {
 	 *            integer value of weight
 	 */
 	public void setWeigth(int weigth) {
-		this.weigth = weigth;
-	}
-
-	/**
-	 * Get board matrix.
-	 * 
-	 * @return matrix
-	 */
-	public int[][] getMatrix() {
-		return matrix;
-	}
-
-	/**
-	 * Get player coordinates.
-	 * 
-	 * @return array of coordinates
-	 */
-	public int[][] getPlayerCoords() {
-		return playerCoords;
-	}
-
-	/**
-	 * Get walls available.
-	 * 
-	 * @return array that contains number walls available per player
-	 */
-	public int[] getWalls() {
-		return walls;
-	}
-
-	
-	public void setAction(int move[]){
-		this.action = move;
+		this.weight = weigth;
 	}
 	
 	public int[] getAction() {
