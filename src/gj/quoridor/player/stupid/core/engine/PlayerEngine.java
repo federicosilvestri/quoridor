@@ -69,10 +69,10 @@ public class PlayerEngine implements Runnable {
 			}
 
 			long elapsed = System.nanoTime() - startTime;
-			System.out.println("Research in progress. Elapsed time:" + (elapsed / Math.pow(10, 9)) + "s");
+			System.out.println("Montecarlo Tree creation in progress. Elapsed time:" + (elapsed / Math.pow(10, 9)) + "s");
 		}
 		
-		System.out.println("Research ended. Result: ");
+		System.out.println("Creation and backpropagation ended. Result: ");
 		System.out.println(gameTree);
 		//System.out.println(getResult());
 		new TreeViewer(gameTree);

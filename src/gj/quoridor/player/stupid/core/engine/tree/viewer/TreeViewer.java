@@ -26,11 +26,12 @@ public class TreeViewer extends JFrame {
 		
 		setLayout(new BorderLayout());
 		setSize(1000, 1000);
-		setTitle("Tree Viewer");
+		setTitle("Montecarlo Tree Viewer");
 		setResizable(true);
 		JLabel j = new JLabel("JTree");
 		add(j, BorderLayout.NORTH);
 		addTree();
+		setDefaultCloseOperation(EXIT_ON_CLOSE);
 		setVisible(true);
 	}
 	
