@@ -2,6 +2,7 @@ package gj.quoridor.player.stupid.core.engine;
 
 import java.util.Iterator;
 import java.util.List;
+
 import gj.quoridor.player.stupid.core.GameManager;
 import gj.quoridor.player.stupid.core.engine.tree.Node;
 
@@ -10,7 +11,7 @@ class PlayerWorker implements Runnable {
 	/**
 	 * Depth to reach before recursion.
 	 */
-	public final static int THREAD_FORK_DEPTH = 2;
+	public final static int THREAD_FORK_DEPTH = 1;
 
 	/**
 	 * Depth of current thread
@@ -110,12 +111,9 @@ class PlayerWorker implements Runnable {
 			GameManager gm = manager.getSimulation();
 			gm.play(engine.player, action[0], action[1]);
 			Node added = engine.gameTree.addChild(node, gm, action);
-			Runnable r = new PlayerWorker(gm, engine, added, depth + 1);
-			engine.service.submit(r);
+			PlayerWorker playerWorker = new PlayerWorker(gm, engine, added, depth + 1);
+			engine.scale(playerWorker);
 		}
-
-		// We need to control service now
-
 	}
 
 	private void backPropagate(Node node, int weight) {
@@ -127,8 +125,12 @@ class PlayerWorker implements Runnable {
 		}
 	}
 
-	public boolean isFinished() {
+	boolean isFinished() {
 		return finished;
+	}
+	
+	void setStop() {
+		this.stop = true;
 	}
 
 	@Override
@@ -136,6 +138,8 @@ class PlayerWorker implements Runnable {
 		finished = false;
 		computeActions(start, startGameManager, depth);
 		finished = true;
+		
+		// notify engine that we have finished!
+		engine.fireFinished(this);
 	}
-
 }

@@ -1,7 +1,7 @@
 package main;
 
 import java.security.SecureRandom;
-import java.util.Scanner;
+import java.util.Arrays;
 
 import gj.quoridor.player.stupid.core.GameCostants;
 import gj.quoridor.player.stupid.core.GameManager;
@@ -14,62 +14,19 @@ public class Main {
 
 	public static void main(String args[]) {
 		manager = new GameManager();
+		sr = new SecureRandom();
+		//putRandomWalls(19);
 
-		// manager.play(GameManager.BLUE, GameManager.PUT_WALL, 72);
-		// manager.play(GameManager.BLUE, GameManager.PUT_WALL, 32);
-		// manager.play(GameManager.BLUE, GameManager.PUT_WALL, 25);
-		// manager.play(GameManager.BLUE, GameManager.PUT_WALL, 18);
-		// manager.play(GameManager.BLUE, GameManager.PUT_WALL, 43);
-		// manager.play(GameManager.BLUE, GameManager.PUT_WALL, 45);
-		// manager.play(GameManager.BLUE, GameManager.PUT_WALL, 22);
-		// manager.play(GameManager.BLUE, GameManager.PUT_WALL, 15);
-		// manager.play(GameManager.BLUE, GameManager.PUT_WALL, 1);
-
-		// manager.play(GameManager.BLUE, GameManager.PUT_WALL, 15);
-		// manager.play(GameManager.BLUE, GameManager.PUT_WALL, 13);
-		// manager.play(GameManager.BLUE, GameManager.PUT_WALL, 11);
-		// manager.play(GameManager.BLUE, GameManager.PUT_WALL, 43);
-		// manager.play(GameManager.BLUE, GameManager.PUT_WALL, 45);
-		// manager.play(GameManager.BLUE, GameManager.PUT_WALL, 22);
-
-		// manager.play(GameManager.RED, GameManager.PUT_WALL, 40);
-		// manager.play(GameManager.RED, GameManager.PUT_WALL, 16);
-		// manager.play(GameManager.RED, GameManager.PUT_WALL, 25);
-		// manager.play(GameManager.RED, GameManager.PUT_WALL, 27);
-		// manager.play(GameManager.RED, GameManager.PUT_WALL, 29);
-		// manager.play(GameManager.RED, GameManager.PUT_WALL, 20);
-		// manager.play(GameManager.RED, GameManager.PUT_WALL, 22);
-		// manager.play(GameManager.RED, GameManager.PUT_WALL, 46);
-
-		// manager.play(GameManager.RED, GameManager.PUT_WALL, 40);
-		// manager.play(GameManager.RED, GameManager.PUT_WALL, 48);
-		// manager.play(GameManager.RED, GameManager.PUT_WALL, 80);
-		// manager.play(GameManager.BLUE, GameManager.PUT_WALL, 105);
-		// manager.play(GameManager.RED, GameManager.PUT_WALL, 34);
-		// manager.play(GameManager.RED, GameManager.PUT_WALL, 11);
-		// manager.play(GameManager.RED, GameManager.PUT_WALL, 51);
-		// manager.play(GameManager.BLUE, GameManager.PUT_WALL, 76);
-		// manager.play(GameManager.RED, GameManager.PUT_WALL, 107);
-		// manager.play(GameManager.RED, GameManager.PUT_WALL, 109);
-		// manager.play(GameManager.BLUE, GameManager.PUT_WALL, 86);
-		// manager.play(GameManager.RED, GameManager.PUT_WALL, 54);
-		// manager.play(GameManager.RED, GameManager.PUT_WALL, 31);
-		//
-		// int coord[] = new int[] { 16, 0 };
-		// manager.setPlayerCoords(GameManager.RED, coord);
-		// //
-		// System.out.println(manager.board);
-		// //
-		// PathSearcher ps = manager.board.buildPathSearcher();
-		// //// ps.verbose = true;
-		// // ps.setDestinationY(16);
-		// System.out.println("Reachibility: " + ps.compute(coord[0],
-		// coord[1]));
+		manager.setPlayerCoords(GameManager.BLUE, new int[] { 12, 16 });
+		System.out.println(manager.board);
 
 		// start();
 
-		PlayerEngine pe = new PlayerEngine(manager, GameManager.BLUE);
-		pe.debug();
+		 PlayerEngine pe = new PlayerEngine(manager, GameManager.BLUE);
+		 pe.debug();
+		 System.out.println(pe.getResult());
+		 int action[] = pe.getBestAction();
+		 System.out.println("Best action is: " + Arrays.toString(action));
 	}
 
 	private static void start() {

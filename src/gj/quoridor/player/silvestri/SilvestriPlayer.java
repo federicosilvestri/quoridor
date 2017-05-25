@@ -1,11 +1,7 @@
 package gj.quoridor.player.silvestri;
 
-import java.security.SecureRandom;
-import java.util.List;
-
 import gj.quoridor.player.Player;
 import gj.quoridor.player.stupid.core.GameManager;
-import gj.quoridor.player.stupid.core.engine.ExhaustiveResearch;
 import gj.quoridor.player.stupid.core.engine.PlayerEngine;
 
 public class SilvestriPlayer implements Player {

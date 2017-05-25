@@ -30,8 +30,8 @@ public class Node implements Serializable {
 	/**
 	 * Weight of this node.
 	 */
-	private int weight;
-	
+	private float weight;
+
 	/**
 	 * Move that brings here.
 	 */
@@ -68,14 +68,20 @@ public class Node implements Serializable {
 	 * 
 	 * @return integer number of weight
 	 */
-	public int getWeight() {
+	public float getWeight() {
 		return weight;
 	}
 
+	/**
+	 * Set parent node.
+	 * 
+	 * @param parent
+	 *            parent node.
+	 */
 	public void setParent(Node parent) {
 		this.parent = parent;
 	}
-	
+
 	/**
 	 * Set weight of node.
 	 * 
@@ -85,15 +91,25 @@ public class Node implements Serializable {
 	public void setWeigth(int weigth) {
 		this.weight = weigth;
 	}
-	
+
+	/**
+	 * Get action to reach this node.
+	 * 
+	 * @return array of action
+	 */
 	public int[] getAction() {
 		return action;
 	}
-	
+
 	@Override
 	public String toString() {
 		String s = "";
-		s += "Action: " + Arrays.toString(action);
+		if (root) {
+			s += "Root Node";
+		} else {
+			s += "Action: " + Arrays.toString(action) + ", w=" + weight;
+		}
+
 		return s;
 	}
 }
