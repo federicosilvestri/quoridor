@@ -15,9 +15,9 @@ public class Main {
 	public static void main(String args[]) {
 		manager = new GameManager();
 		sr = new SecureRandom();
-		//putRandomWalls(19);
+		putRandomWalls(19);
 
-		manager.setPlayerCoords(GameManager.BLUE, new int[] { 12, 16 });
+		manager.setPlayerCoords(GameManager.BLUE, new int[] { 12, 2 });
 		System.out.println(manager.board);
 
 		// start();

@@ -117,12 +117,13 @@ class PlayerWorker implements Runnable {
 	}
 
 	private void backPropagate(Node node, int weight) {
-		Iterator<Node> bpi = engine.gameTree.getToRootIterator(node);
-
-		while (bpi.hasNext()) {
-			Node n = bpi.next();
-			n.setWeigth(weight);
-		}
+		node.setWeigth(weight);
+//		Iterator<Node> bpi = engine.gameTree.getToRootIterator(node);
+//
+//		while (bpi.hasNext()) {
+//			Node n = bpi.next();
+//			n.setWeigth(weight);
+//		}
 	}
 
 	boolean isFinished() {

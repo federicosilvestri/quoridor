@@ -111,18 +111,18 @@ public class PlayerEngine extends Thread {
 
 			viewer.repaint();
 		}
-		System.out.println("Computantio ended");
+		System.out.println("Computantion ended");
 	}
 
 	/**
 	 * Execute computation.
 	 */
-	public void compute() {
+	public void startComputing() {
 		// set up services
 		setUpService();
 		PlayerWorker pw = new PlayerWorker(manager, this, gameTree.getRoot(), 0);
-		this.start();
-		pw.run();
+		new Thread(pw).start();
+		start();
 	}
 
 	private void setUpService() {
@@ -209,6 +209,7 @@ public class PlayerEngine extends Thread {
 		 */
 		// Wait max computation time
 		System.out.println("TC: Time controller is in action...");
+		boolean timeout = true;
 		try {
 			service.awaitTermination(maxComputationTime, TimeUnit.SECONDS);
 		} catch (InterruptedException e) {
@@ -216,9 +217,15 @@ public class PlayerEngine extends Thread {
 				System.err.println(
 						"TC: Received Interruption during Max Computation time counting... but futures are not finished!");
 				return;
+			} else {
+				timeout = false;
 			}
 		}
-		System.out.println("TC: Time is out!");
+		if (timeout) {
+			System.out.println("TC: Time is out!");
+		} else {
+			System.out.println("Computation speed up!");
+		}
 
 		// Close service
 		List<Runnable> futures = service.shutdownNow();
