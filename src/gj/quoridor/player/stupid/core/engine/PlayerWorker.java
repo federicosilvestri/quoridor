@@ -1,5 +1,6 @@
 package gj.quoridor.player.stupid.core.engine;
 
+import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 
@@ -11,7 +12,7 @@ class PlayerWorker implements Runnable {
 	/**
 	 * Depth to reach before recursion.
 	 */
-	public final static int THREAD_FORK_DEPTH = 1;
+	public final static int THREAD_FORK_DEPTH = 0;
 
 	/**
 	 * Depth of current thread
@@ -21,7 +22,7 @@ class PlayerWorker implements Runnable {
 	/**
 	 * Start node.
 	 */
-	private final Node start;
+	private final Node startNode;
 	
 	/**
 	 * Player engine.
@@ -44,7 +45,7 @@ class PlayerWorker implements Runnable {
 	private boolean finished;
 
 	PlayerWorker(GameManager startGM, PlayerEngine pe, Node start, int depth) {
-		this.start = start;
+		this.startNode = start;
 		this.startGameManager = startGM;
 		this.stop = false;
 		this.finished = false;
@@ -96,6 +97,13 @@ class PlayerWorker implements Runnable {
 
 		// Search all possible moves
 		ExhaustiveResearch er = new ExhaustiveResearch(engine.player, manager);
+		
+//		System.out.println("---Found moves by Engine:---\n\t");
+//		for (int[] a : er.getActions()) {
+//			System.out.print(Arrays.toString(a) + ", ");
+//		}
+//		System.out.println("\n-- End moves ---");
+		
 
 		if (depth < THREAD_FORK_DEPTH) {
 			// scale
@@ -108,7 +116,7 @@ class PlayerWorker implements Runnable {
 				// play this move
 				gm.play(engine.player, action[0], action[1]);
 				// Add to tree
-				Node added = engine.gameTree.addChild(node, gm, action);
+				Node added = engine.gameTree.addChild(node, action);
 				// Inspect
 				computeActions(added, gm, depth + 1);
 			}
@@ -116,18 +124,22 @@ class PlayerWorker implements Runnable {
 	}
 
 	private void fork(Node node, GameManager manager, ExhaustiveResearch er, int depth) {
+		// Get all actions (or children) of this leaf
 		List<int[]> actions = er.getActions();
 
+		// Create a worker for each sub-tree
 		for (int[] action : actions) {
 			GameManager gm = manager.getSimulation();
 			gm.play(engine.player, action[0], action[1]);
-			Node added = engine.gameTree.addChild(node, gm, action);
+			Node added = engine.gameTree.addChild(node, action);
+			
 			PlayerWorker playerWorker = new PlayerWorker(gm, engine, added, depth + 1);
-			engine.scale(playerWorker);
+			engine.distribute(playerWorker);
 		}
 	}
 
-	private void backPropagate(Node node, float weight) {
+	// check if synch or not
+	private synchronized void backPropagate(Node node, float weight) {		
 		node.setWeigth(weight);
 		Iterator<Node> bpi = engine.gameTree.getToRootIterator(node);
 
@@ -157,7 +169,7 @@ class PlayerWorker implements Runnable {
 		WorkerNotifier workerNotifier = new WorkerNotifier(engine, this);
 		
 		// Execute actions
-		computeActions(start, startGameManager, depth);
+		computeActions(startNode, startGameManager, depth);
 		
 		finished = true;
 		// Start notifier thread

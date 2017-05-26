@@ -38,16 +38,18 @@ public class ExhaustiveResearch {
 	public List<int[]> getActions() {
 		List<int[]> actions = new ArrayList<>();
 
-		// move actions
-		for (int move : computeMoves()) {
+		// Move actions
+		ArrayList<Integer> moves = computeMoves();
+		for (int move : moves) {
 			actions.add(new int[] { GameManager.MOVE, move });
 		}
 
-		// put-wall action
-		for (int wallIndex : computeWalls()) {
+		// Put-wall action
+		ArrayList<Integer> walls = computeWalls();
+		for (int wallIndex : walls) {
 			actions.add(new int[] { GameManager.PUT_WALL, wallIndex });
 		}
-
+		
 		return actions;
 	}
 
@@ -70,8 +72,6 @@ public class ExhaustiveResearch {
 
 	private ArrayList<Integer> computeWalls() {
 		ArrayList<Integer> walls = new ArrayList<>();
-		int[] redCoords = gameManager.getPlayerCoords(GameManager.RED);
-		int[] blueCoords = gameManager.getPlayerCoords(GameManager.BLUE);
 
 		if (!gameManager.areWallsAvailable(player)) {
 			return walls;
@@ -79,15 +79,8 @@ public class ExhaustiveResearch {
 
 		// Iterating walls that aren't used yet
 		for (Integer wallIndex : gameManager.getAvailableWalls()) {
-			int wallCoord[][] = gameManager.board.getWallCoords(wallIndex);
-			// But test if they're compatible
-			if (!gameManager.board.isWallOccupied(wallCoord)) {
-				// also we need to check if path after put-wall-move is
-				// legal
-				if (gameManager.board.checkReachability(wallIndex, blueCoords, redCoords)) {
-					// simulate move and check path
-					walls.add(wallIndex);
-				}
+			if (gameManager.canPutWall(player, wallIndex)) {
+				walls.add(wallIndex);
 			}
 		}
 

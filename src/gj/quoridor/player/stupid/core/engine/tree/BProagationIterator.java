@@ -43,10 +43,13 @@ class BProagationIterator implements Iterator<Node> {
 			throw new NoSuchElementException();
 		}
 		
-		// Go back
+		// save current
+		Node current = cursor;
+		
+		// Go back with cursor
 		cursor = cursor.parent;
 		
-		return cursor;
+		return current;
 		
 	}
 

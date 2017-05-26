@@ -1,5 +1,6 @@
 package gj.quoridor.player.stupid.core;
 
+import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -110,12 +111,11 @@ public class GameManager {
 
 	private GameManager(int[][] playerCoords, int[] wallAvailability, LinkedList<Integer> wallStock,
 			int[] moveAvailability, Board board) {
-		super();
-		this.playerCoords = playerCoords;
-		this.wallAvailability = wallAvailability;
-		this.wallStock = wallStock;
-		this.moveAvailability = moveAvailability;
-		this.board = board;
+		this.playerCoords = playerCoords.clone();
+		this.wallAvailability = wallAvailability.clone();
+		this.wallStock = new LinkedList<Integer>(wallStock);
+		this.moveAvailability = moveAvailability.clone();
+		this.board = board.copy();
 	}
 
 	/**
@@ -196,14 +196,6 @@ public class GameManager {
 			throw new WallUnavailableException(wallCoords, index);
 		}
 
-		// check if wall locks paths
-		// boolean reachibility = board.checkReachability(index,
-		// playerCoords[BLUE], playerCoords[RED]);
-		//
-		// if (!reachibility) {
-		// throw new RuntimeException("No paths available for players");
-		// }
-
 		// Add wall to Board Matrix
 		board.addWall(wallCoords, player);
 
@@ -275,6 +267,35 @@ public class GameManager {
 				nextCoords[1]);
 
 		return checkWalls;
+	}
+
+	/**
+	 * Check if you can put wall.
+	 * 
+	 * @param player
+	 *            related player
+	 * @param wallIndex
+	 *            index of wall
+	 * @return true if you can put wall, false otherwise
+	 */
+	public boolean canPutWall(int player, int wallIndex) {
+		// check if wall is available in stock
+		if (wallAvailability[player] < 1) {
+			return false;
+		}
+
+		// Get wall coordinates
+		int[][] wallCoords = board.getWallCoords(wallIndex);
+
+		// check if wall can be positioned in current index
+		if (board.isWallOccupied(wallCoords)) {
+			return false;
+		}
+
+		// check if wall locks paths
+		boolean reachibility = board.checkReachability(wallIndex, playerCoords[BLUE], playerCoords[RED]);
+		return reachibility;
+
 	}
 
 	/**
@@ -352,9 +373,10 @@ public class GameManager {
 	public boolean isFinished() {
 		return (getWinner() != -1);
 	}
-	
+
 	/**
 	 * Get winner of game.
+	 * 
 	 * @return return -1 if there are no winner
 	 */
 	public int getWinner() {
@@ -363,7 +385,7 @@ public class GameManager {
 		} else if (playerCoords[BLUE][1] == GameCostants.BLUE_WIN_Y) {
 			return BLUE;
 		}
-		
+
 		return -1;
 	}
 
@@ -373,7 +395,19 @@ public class GameManager {
 	 * @return Game Manager Object
 	 */
 	public GameManager getSimulation() {
-		return new GameManager(playerCoords.clone(), wallAvailability.clone(), new LinkedList<Integer>(wallStock),
-				moveAvailability.clone(), board.copy());
+		return new GameManager(playerCoords, wallAvailability, wallStock, moveAvailability, board.copy());
+	}
+	
+	@Override
+	public String toString() {
+		String s = "-- Game Manager " + hashCode() + "--";
+		s += "\n-Coordinates:";
+		s += "\n\tRED: " + Arrays.toString(playerCoords[RED]);
+		s += "\n\tBLUE: " + Arrays.toString(playerCoords[BLUE]);
+		
+		s += "\n-Walls available:";
+		s += "\n\tRED: " + wallAvailability[RED];
+		s += "\n\tBLUE: " + wallAvailability[BLUE];
+		return s;
 	}
 }

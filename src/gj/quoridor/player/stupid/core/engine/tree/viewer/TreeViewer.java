@@ -32,7 +32,7 @@ public class TreeViewer extends JFrame {
 		JLabel j = new JLabel("JTree");
 		add(j, BorderLayout.NORTH);
 		addTree();
-		setDefaultCloseOperation(EXIT_ON_CLOSE);
+		setDefaultCloseOperation(DISPOSE_ON_CLOSE);
 		setVisible(true);
 	}
 	

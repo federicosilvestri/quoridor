@@ -6,9 +6,8 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
+import java.util.Arrays;
 import java.util.Iterator;
-
-import gj.quoridor.player.stupid.core.GameManager;
 
 public class GameTree implements Serializable {
 
@@ -47,24 +46,25 @@ public class GameTree implements Serializable {
 		root = Node.DEFAULT_ROOT;
 	}
 
-	
 	/**
 	 * Add child to selected parent.
 	 * 
 	 * @param parent
 	 *            parent
-	 * @param gm
-	 *            Game Manager object
 	 * @return Added node
 	 */
-	public synchronized Node addChild(Node parent, GameManager gm, int[] action) {
+	public synchronized Node addChild(Node parent, int[] action) {
+		if (parent.root) 
+		System.out.println("Request to add child: Parent is:" + parent + "\n\taction is= " + Arrays.toString(action));
+
+		// create new node with current action
 		Node node = new Node(action);
 		node.parent = parent;
 		parent.childs.add(node);
 
 		return node;
 	}
-	
+
 	public Iterator<Node> getToRootIterator(Node n) {
 		return new BProagationIterator(n);
 	}
@@ -72,7 +72,7 @@ public class GameTree implements Serializable {
 	public Iterator<Node> getIterator() {
 		return new GameTreeIterator(root);
 	}
-	
+
 	/**
 	 * Get Tree root.
 	 * 
@@ -90,18 +90,18 @@ public class GameTree implements Serializable {
 		oos.close();
 		fos.close();
 	}
-	
+
 	@Override
 	public String toString() {
 		String s = "";
-		
+
 		Iterator<Node> it = getIterator();
-		
+
 		while (it.hasNext()) {
 			Node n = it.next();
 			System.out.println(n);
 		}
-		
+
 		return s;
 	}
 }
