@@ -1,9 +1,8 @@
 package gj.quoridor.player.stupid.core.engine;
 
 import java.util.List;
-import java.util.ArrayList;
-import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
 import gj.quoridor.player.stupid.core.GameManager;
@@ -36,12 +35,9 @@ public class PlayerEngine extends Thread {
 	/**
 	 * Executor service for Thread Pool.
 	 */
-	private ExecutorService service;
+	private ThreadPoolExecutor service;
 
-	/**
-	 * List Of Futures
-	 */
-	private ArrayList<PlayerWorker> workers;
+
 
 	/**
 	 * Is finished or not variable.
@@ -106,9 +102,12 @@ public class PlayerEngine extends Thread {
 
 		while (!finished) {
 			try {
-				Thread.sleep(10000);
-			} catch (InterruptedException e) {}
-
+				Thread.sleep(500);
+			} catch (InterruptedException e) {
+			}
+			
+			System.out.println(service.getActiveCount());
+			
 			viewer.repaint();
 		}
 		System.out.println("Computantion ended");
@@ -117,17 +116,30 @@ public class PlayerEngine extends Thread {
 	/**
 	 * Execute computation.
 	 */
-	public void startComputing() {
+	public void startComputation() {
 		// set up services
 		setUpService();
+		
 		PlayerWorker pw = new PlayerWorker(manager, this, gameTree.getRoot(), 0);
-		new Thread(pw).start();
-		start();
+		Thread playerWorkerStart = new Thread(pw);
+		playerWorkerStart.start();
+
+		// Start computation controller
+		this.start();
+
+		// Wait until thread counter is not finished or is notified by speed-up termination
+		try {
+			this.join();
+		} catch (InterruptedException e) {
+		}
 	}
 
 	private void setUpService() {
-		this.service = Executors.newFixedThreadPool(20);
-		this.workers = new ArrayList<>();
+		if (service != null || !service.isTerminated()) {
+			throw new RuntimeException("Cannot set-up service! Workers are still running!");
+		}
+		
+		this.service = (ThreadPoolExecutor) Executors.newFixedThreadPool(20);
 	}
 
 	void scale(PlayerWorker playerWorker) {
@@ -135,26 +147,18 @@ public class PlayerEngine extends Thread {
 			throw new RuntimeException("Executor Service is not set up!");
 		}
 		service.submit(playerWorker);
-		workers.add(playerWorker);
 	}
 
-	void fireFinished(PlayerWorker playerWorker) {
-		// remove it from active player workers
-		workers.remove(playerWorker);
-		
+	synchronized void fireFinished(PlayerWorker playerWorker) {
 		// check all futures if they're finished
-		for (PlayerWorker pw : workers) {
-			if (!pw.isFinished()) {
-				// this future is currently working, not finished
-				this.finished = false;
-				return;
-			}
-
+		int active = service.getActiveCount();
+		if (active > 0) {
+			finished = false;
+		} else {
+			// no futures are working, interrupt time controller!
+			this.finished = true;
+			this.interrupt();
 		}
-
-		// no futures are working, interrupt time controller!
-		this.finished = true;
-		this.interrupt();
 	}
 
 	/**

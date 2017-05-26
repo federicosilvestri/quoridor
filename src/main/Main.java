@@ -23,6 +23,7 @@ public class Main {
 		// start();
 
 		 PlayerEngine pe = new PlayerEngine(manager, GameManager.BLUE);
+		 //pe.debug();
 		 pe.debug();
 		 System.out.println(pe.getResult());
 		 int action[] = pe.getBestAction();

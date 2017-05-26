@@ -1,6 +1,5 @@
 package gj.quoridor.player.stupid.core.engine;
 
-import java.util.Iterator;
 import java.util.List;
 
 import gj.quoridor.player.stupid.core.GameManager;
@@ -136,11 +135,15 @@ class PlayerWorker implements Runnable {
 
 	@Override
 	public void run() {
+		// Worker Notifier
 		finished = false;
-		computeActions(start, startGameManager, depth);
-		finished = true;
+		WorkerNotifier workerNotifier = new WorkerNotifier(engine, this);
 		
-		// notify engine that we have finished!
-		engine.fireFinished(this);
+		// Execute actions
+		computeActions(start, startGameManager, depth);
+		
+		finished = true;
+		// Start notifier thread
+		workerNotifier.start();
 	}
 }
