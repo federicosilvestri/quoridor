@@ -1,15 +1,9 @@
 package gj.quoridor.player.stupid.core.engine.tree;
 
-import java.io.Serializable;
 import java.util.Arrays;
 import java.util.LinkedList;
 
-public class Node implements Serializable {
-
-	/**
-	 * Serial Version
-	 */
-	private static final long serialVersionUID = 1L;
+public class Node {
 
 	/**
 	 * True if this node is the root of tree.
@@ -37,11 +31,6 @@ public class Node implements Serializable {
 	private final int[] action;
 
 	/**
-	 * ROOT Node instance.
-	 */
-	public static final Node DEFAULT_ROOT = new Node(null, true);
-
-	/**
 	 * Create a new node.
 	 * 
 	 * @param matrix
@@ -55,7 +44,7 @@ public class Node implements Serializable {
 		this(action, false);
 	}
 
-	private Node(int[] action, boolean root) {
+	Node(int[] action, boolean root) {
 		this.childs = new LinkedList<>();
 		this.parent = null;
 		this.action = action;
@@ -103,6 +92,7 @@ public class Node implements Serializable {
 	@Override
 	public String toString() {
 		String s = "";
+
 		if (root) {
 			s += "Root Node";
 		} else {

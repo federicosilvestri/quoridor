@@ -19,11 +19,16 @@ public class PlayerEngine extends Thread {
 	 * Secure Random for random actions.
 	 */
 	private final static SecureRandom SECURE_RANDOM = new SecureRandom();
-	
+
 	/**
 	 * Default Max computation time expressed in seconds.
 	 */
-	private final static int DEFAULT_MAX_COMPUTATION_TIME = 3;
+	private final static int DEFAULT_MAX_COMPUTATION_TIME = 5;
+
+	/**
+	 * Default Max computation depth.
+	 */
+	private final static int DEFAULT_MAX_COMPUTATION_DEPTH = 3;
 
 	/**
 	 * Game Manager
@@ -51,9 +56,9 @@ public class PlayerEngine extends Thread {
 	private boolean finished;
 
 	/**
-	 * Game Tree TEMP PUBLIC
+	 * Game Tree
 	 */
-	public final GameTree gameTree;
+	GameTree gameTree;
 
 	/**
 	 * Chosen player
@@ -71,8 +76,7 @@ public class PlayerEngine extends Thread {
 	public PlayerEngine(GameManager manager, int player) {
 		this.manager = manager.getSimulation();
 		this.player = player;
-		this.maxDepth = 1;
-		this.gameTree = new GameTree();
+		this.maxDepth = DEFAULT_MAX_COMPUTATION_DEPTH;
 		this.maxComputationTime = DEFAULT_MAX_COMPUTATION_TIME;
 	}
 
@@ -100,15 +104,13 @@ public class PlayerEngine extends Thread {
 		System.out.println("Instanced first player worker...");
 		// First instance of player Worker
 		PlayerWorker pw = new PlayerWorker(manager, this, gameTree.getRoot(), 0);
-		
-		
+
 		// Controller
 		System.out.print("Starting Computation Controller...");
 		this.start();
 		System.out.println("done!");
 		// First start
 		System.out.print("Starting workers factory...");
-		//new Thread(pw).start();
 		pw.run();
 		System.out.println("done!");
 
@@ -149,6 +151,7 @@ public class PlayerEngine extends Thread {
 		try {
 			this.join();
 		} catch (InterruptedException e) {
+			finished = true;
 		}
 	}
 
@@ -157,6 +160,17 @@ public class PlayerEngine extends Thread {
 			this.service = (ThreadPoolExecutor) Executors.newFixedThreadPool(20);
 		} else {
 			throw new RuntimeException("Cannot set-up service! Workers are still running!");
+		}
+
+		if (gameTree != null) {
+			throw new RuntimeException("Game Tree is already created.");
+		}
+
+		gameTree = new GameTree();
+
+		// force initialization
+		while (!gameTree.getRoot().childs.isEmpty()) {
+			gameTree.getRoot().childs.clear();
 		}
 	}
 
@@ -190,17 +204,29 @@ public class PlayerEngine extends Thread {
 		}
 
 		LinkedList<Node> nodes = gameTree.getRoot().childs;
-//		nodes.sort(new NodeWeightComparator());
-//		
-//		int index = 0;
-//		if (nodes.getFirst().getWeight() == nodes.getLast().getWeight()) {
-//			// No difference between nodes get random node
-//			index = SECURE_RANDOM.nextInt(nodes.size());
-//		}
-//		
-//		return nodes.get(index).getAction();
-		
-		return nodes.getFirst().getAction();
+		nodes.sort(new NodeWeightComparator());
+
+		int index = 0;
+		if (nodes.getFirst().getWeight() == nodes.getLast().getWeight()) {
+			// No difference between nodes get random node
+			index = SECURE_RANDOM.nextInt(nodes.size());
+		}
+
+		return nodes.get(index).getAction();
+	}
+
+	public List<int[]> getMoves() {
+		if (!finished) {
+			throw new RuntimeException("Result is not available yet!");
+		}
+
+		List<int[]> moves = new LinkedList<>();
+
+		for (Node n : gameTree.getRoot().childs) {
+			moves.add(n.getAction());
+		}
+
+		return moves;
 	}
 
 	public String getResult() {
@@ -224,27 +250,17 @@ public class PlayerEngine extends Thread {
 		/**
 		 * This method should sleep until time is not ended.
 		 */
-		// Wait max computation time
-//		System.out.println("TC: Time controller is in action...");
-//		boolean timeout = true;
 		try {
+			// Wait max computation time
 			service.awaitTermination(maxComputationTime, TimeUnit.SECONDS);
 		} catch (InterruptedException e) {
 			if (!finished) {
 				System.err.println(
 						"TC: Received Interruption during Max Computation time counting... but futures are not finished!");
 				return;
+
 			}
-//			} else {
-//				timeout = false;
-//			}
 		}
-		
-//		if (timeout) {
-//			System.out.println("TC: Time is out!");
-//		} else {
-//			System.out.println("Computation speed up!");
-//		}
 
 		// Close service
 		List<Runnable> futures = service.shutdownNow();
@@ -257,8 +273,6 @@ public class PlayerEngine extends Thread {
 			}
 		}
 
-//		System.out.println("TC: System is now STOPPED!");
 		finished = true;
 	}
-
 }

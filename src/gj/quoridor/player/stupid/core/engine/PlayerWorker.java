@@ -1,18 +1,17 @@
 package gj.quoridor.player.stupid.core.engine;
 
-import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 
 import gj.quoridor.player.stupid.core.GameManager;
 import gj.quoridor.player.stupid.core.engine.tree.Node;
 
-class PlayerWorker implements Runnable {
+public class PlayerWorker implements Runnable {
 
 	/**
 	 * Depth to reach before recursion.
 	 */
-	public final static int THREAD_FORK_DEPTH = 0;
+	public final static int THREAD_FORK_DEPTH = 3;
 
 	/**
 	 * Depth of current thread
@@ -89,7 +88,7 @@ class PlayerWorker implements Runnable {
 
 		return false;
 	}
-
+	
 	private void computeActions(Node node, GameManager manager, int depth) {
 		if (checkStop(node, manager, depth)) {
 			return;
@@ -98,28 +97,24 @@ class PlayerWorker implements Runnable {
 		// Search all possible moves
 		ExhaustiveResearch er = new ExhaustiveResearch(engine.player, manager);
 		
-//		System.out.println("---Found moves by Engine:---\n\t");
-//		for (int[] a : er.getActions()) {
-//			System.out.print(Arrays.toString(a) + ", ");
-//		}
-//		System.out.println("\n-- End moves ---");
-		
-
 		if (depth < THREAD_FORK_DEPTH) {
 			// scale
 			fork(node, manager, er, depth);
 		} else {
 			// Here we are adding all sons of first child
-			for (int[] action : er.getActions()) {
+			List<int[]> actions = er.getActions();
+			
+			for (int[] action : actions) {
 				// copy Game Manager
 				GameManager gm = manager.getSimulation();
 				// play this move
 				gm.play(engine.player, action[0], action[1]);
 				// Add to tree
-				Node added = engine.gameTree.addChild(node, action);
+				Node child = engine.gameTree.addChild(node, action);
 				// Inspect
-				computeActions(added, gm, depth + 1);
+				computeActions(child, gm, depth + 1);
 			}
+			
 		}
 	}
 
@@ -139,7 +134,7 @@ class PlayerWorker implements Runnable {
 	}
 
 	// check if synch or not
-	private synchronized void backPropagate(Node node, float weight) {		
+	private void backPropagate(Node node, float weight) {		
 		node.setWeigth(weight);
 		Iterator<Node> bpi = engine.gameTree.getToRootIterator(node);
 
@@ -147,9 +142,7 @@ class PlayerWorker implements Runnable {
 		
 		while (bpi.hasNext()) {
 			Node n = bpi.next();
-			
 			accumulateWeight += n.getWeight();
-			
 			n.setWeigth(accumulateWeight);
 		}
 	}

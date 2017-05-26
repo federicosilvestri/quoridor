@@ -24,17 +24,7 @@ class BProagationIterator implements Iterator<Node> {
 
 	@Override
 	public boolean hasNext() {
-		Node parent = cursor.parent;
-
-		if (parent == null) {
-			return false;
-		}
-
-		if (parent.root) {
-			return false;
-		}
-
-		return true;
+		return cursor.root;
 	}
 
 	@Override
