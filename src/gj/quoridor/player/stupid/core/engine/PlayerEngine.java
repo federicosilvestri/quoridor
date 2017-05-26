@@ -37,8 +37,6 @@ public class PlayerEngine extends Thread {
 	 */
 	private ThreadPoolExecutor service;
 
-
-
 	/**
 	 * Is finished or not variable.
 	 */
@@ -54,6 +52,14 @@ public class PlayerEngine extends Thread {
 	 */
 	public final int player;
 
+	/**
+	 * Create a new Player Engine Object.
+	 * 
+	 * @param manager
+	 *            Game Manager
+	 * @param player
+	 *            Player you want to impersonate
+	 */
 	public PlayerEngine(GameManager manager, int player) {
 		this.manager = manager;
 		this.player = player;
@@ -105,9 +111,9 @@ public class PlayerEngine extends Thread {
 				Thread.sleep(500);
 			} catch (InterruptedException e) {
 			}
-			
+
 			System.out.println(service.getActiveCount());
-			
+
 			viewer.repaint();
 		}
 		System.out.println("Computantion ended");
@@ -119,7 +125,7 @@ public class PlayerEngine extends Thread {
 	public void startComputation() {
 		// set up services
 		setUpService();
-		
+
 		PlayerWorker pw = new PlayerWorker(manager, this, gameTree.getRoot(), 0);
 		Thread playerWorkerStart = new Thread(pw);
 		playerWorkerStart.start();
@@ -127,7 +133,8 @@ public class PlayerEngine extends Thread {
 		// Start computation controller
 		this.start();
 
-		// Wait until thread counter is not finished or is notified by speed-up termination
+		// Wait until thread counter is not finished or is notified by speed-up
+		// termination
 		try {
 			this.join();
 		} catch (InterruptedException e) {
@@ -135,11 +142,11 @@ public class PlayerEngine extends Thread {
 	}
 
 	private void setUpService() {
-		if (service != null || !service.isTerminated()) {
+		if (service == null || service.isTerminated()) {
+			this.service = (ThreadPoolExecutor) Executors.newFixedThreadPool(20);
+		} else {
 			throw new RuntimeException("Cannot set-up service! Workers are still running!");
 		}
-		
-		this.service = (ThreadPoolExecutor) Executors.newFixedThreadPool(20);
 	}
 
 	void scale(PlayerWorker playerWorker) {
