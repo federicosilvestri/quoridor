@@ -1,5 +1,7 @@
 package gj.quoridor.player.stupid.core.engine;
 
+import java.security.SecureRandom;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ThreadPoolExecutor;
@@ -8,10 +10,16 @@ import java.util.concurrent.TimeUnit;
 import gj.quoridor.player.stupid.core.GameManager;
 import gj.quoridor.player.stupid.core.engine.tree.GameTree;
 import gj.quoridor.player.stupid.core.engine.tree.Node;
+import gj.quoridor.player.stupid.core.engine.tree.NodeWeightComparator;
 import gj.quoridor.player.stupid.core.engine.tree.viewer.TreeViewer;
 
 public class PlayerEngine extends Thread {
 
+	/**
+	 * Secure Random for random actions.
+	 */
+	private final static SecureRandom SECURE_RANDOM = new SecureRandom();
+	
 	/**
 	 * Default Max computation time expressed in seconds.
 	 */
@@ -178,23 +186,16 @@ public class PlayerEngine extends Thread {
 			throw new RuntimeException("Result is not available yet!");
 		}
 
-		List<Node> nodes = gameTree.getRoot().childs;
-
-		boolean start = true;
-		Node best = null;
-
-		for (Node node : nodes) {
-			if (start) {
-				start = false;
-				best = node;
-			} else {
-				if (node.getWeight() > best.getWeight()) {
-					best = node;
-				}
-			}
+		LinkedList<Node> nodes = gameTree.getRoot().childs;
+		nodes.sort(new NodeWeightComparator());
+		
+		int index = 0;
+		if (nodes.getFirst().getWeight() == nodes.getLast().getWeight()) {
+			// No difference between nodes get random node
+			index = SECURE_RANDOM.nextInt(nodes.size());
 		}
-
-		return best.getAction();
+		
+		return nodes.get(index).getAction();
 	}
 
 	public String getResult() {
@@ -232,6 +233,7 @@ public class PlayerEngine extends Thread {
 				timeout = false;
 			}
 		}
+		
 		if (timeout) {
 			System.out.println("TC: Time is out!");
 		} else {

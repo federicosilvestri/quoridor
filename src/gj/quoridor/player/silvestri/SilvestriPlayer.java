@@ -8,23 +8,23 @@ public class SilvestriPlayer implements Player {
 	private int player;
 	private int opponent;
 	private GameManager gameManager;
-	
+
 	@Override
 	public int[] move() {
 		PlayerEngine pe = new PlayerEngine(gameManager, player);
-		pe.debug();
-		int[] action = pe.getBestAction();
-		
-		gameManager.play(player, action[0], action[1]);
-				
-		return action;
+
+		// int[] action = pe.getBestAction();
+
+		// gameManager.play(player, action[0], action[1]);
+
+		return new int[] { 0, 0 };
 	}
 
 	@Override
 	public void start(boolean isRed) {
 		player = isRed ? GameManager.RED : GameManager.BLUE;
 		opponent = isRed ? GameManager.BLUE : GameManager.RED;
-		
+
 		gameManager = new GameManager();
 	}
 

@@ -3,7 +3,6 @@ package gj.quoridor.player.stupid.core.engine.tree;
 import java.io.Serializable;
 import java.util.Arrays;
 import java.util.LinkedList;
-import java.util.List;
 
 public class Node implements Serializable {
 
@@ -20,7 +19,7 @@ public class Node implements Serializable {
 	/**
 	 * Neighbors.
 	 */
-	public final List<Node> childs;
+	public final LinkedList<Node> childs;
 
 	/**
 	 * Parents.
@@ -88,7 +87,7 @@ public class Node implements Serializable {
 	 * @param weigth
 	 *            integer value of weight
 	 */
-	public void setWeigth(int weigth) {
+	public void setWeigth(float weigth) {
 		this.weight = weigth;
 	}
 

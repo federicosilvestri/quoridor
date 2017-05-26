@@ -1,5 +1,6 @@
 package gj.quoridor.player.stupid.core.engine;
 
+import java.util.Iterator;
 import java.util.List;
 
 import gj.quoridor.player.stupid.core.GameManager;
@@ -59,19 +60,30 @@ class PlayerWorker implements Runnable {
 			 * be calculated in base of distance to victory backPropagate(node,
 			 * -2);
 			 */
+			backPropagate(node, 0.1f);
 			return true;
 		}
 
 		// Checking winning, for back-propagation
 		int winner = manager.getWinner();
+		
 		if (winner == engine.player) {
 			// Winning
-			backPropagate(node, 2);
+			backPropagate(node, 1.0f);
 			return true;
 		} else if (winner != -1) {
 			// Enemy player wins
-			backPropagate(node, 0);
+			backPropagate(node, -0.5f);
 			return true;
+		} else {
+			// No winning but we should check if there are cycles
+			/*
+			 * if nextNode is previous node, not good
+			 */
+			
+			// Check with exhaustive research
+			// ExhaustiveResearch er = new ExhaustiveResearch(engine.player, manager);
+			//check moves
 		}
 
 		return false;
@@ -115,14 +127,19 @@ class PlayerWorker implements Runnable {
 		}
 	}
 
-	private void backPropagate(Node node, int weight) {
+	private void backPropagate(Node node, float weight) {
 		node.setWeigth(weight);
-//		Iterator<Node> bpi = engine.gameTree.getToRootIterator(node);
-//
-//		while (bpi.hasNext()) {
-//			Node n = bpi.next();
-//			n.setWeigth(weight);
-//		}
+		Iterator<Node> bpi = engine.gameTree.getToRootIterator(node);
+
+		float accumulateWeight = weight;
+		
+		while (bpi.hasNext()) {
+			Node n = bpi.next();
+			
+			accumulateWeight += n.getWeight();
+			
+			n.setWeigth(accumulateWeight);
+		}
 	}
 
 	boolean isFinished() {

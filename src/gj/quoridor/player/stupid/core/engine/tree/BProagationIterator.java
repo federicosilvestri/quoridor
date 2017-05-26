@@ -1,13 +1,22 @@
 package gj.quoridor.player.stupid.core.engine.tree;
 
 import java.util.Iterator;
+import java.util.NoSuchElementException;
 
+/**
+ * This class is an iterator that iterates nodes until it reach root-1 node. It
+ * allow system to visit all nodes of path for back-propagation purposes.
+ * 
+ * @author federicosilvestri
+ * @version 2.0
+ *
+ */
 class BProagationIterator implements Iterator<Node> {
 
 	/**
 	 * Cursor node
 	 */
-	private final Node cursor;
+	private Node cursor;
 
 	BProagationIterator(Node start) {
 		this.cursor = start;
@@ -15,12 +24,30 @@ class BProagationIterator implements Iterator<Node> {
 
 	@Override
 	public boolean hasNext() {
-		return cursor.root;
+		Node parent = cursor.parent;
+
+		if (parent == null) {
+			return false;
+		}
+
+		if (parent.root) {
+			return false;
+		}
+
+		return true;
 	}
 
 	@Override
 	public Node next() {
-		return cursor.parent;
+		if (!hasNext()) {
+			throw new NoSuchElementException();
+		}
+		
+		// Go back
+		cursor = cursor.parent;
+		
+		return cursor;
+		
 	}
 
 }

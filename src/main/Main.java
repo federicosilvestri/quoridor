@@ -1,11 +1,10 @@
 package main;
 
+import java.io.IOException;
 import java.security.SecureRandom;
 import java.util.Arrays;
 
-import gj.quoridor.player.stupid.core.GameCostants;
 import gj.quoridor.player.stupid.core.GameManager;
-import gj.quoridor.player.stupid.core.PathSearcher;
 import gj.quoridor.player.stupid.core.engine.PlayerEngine;
 
 public class Main {
@@ -13,21 +12,7 @@ public class Main {
 	public static GameManager manager;
 
 	public static void main(String args[]) {
-		manager = new GameManager();
-		sr = new SecureRandom();
-		putRandomWalls(19);
-
-		manager.setPlayerCoords(GameManager.BLUE, new int[] { 12, 14 });
-		System.out.println(manager.board);
-
-		// start();
-
-		 PlayerEngine pe = new PlayerEngine(manager, GameManager.BLUE);
-		 //pe.debug();
-		 pe.debug();
-		 System.out.println(pe.getResult());
-		 int action[] = pe.getBestAction();
-		 System.out.println("Best action is: " + Arrays.toString(action));
+		start();
 	}
 
 	private static void start() {
@@ -35,35 +20,37 @@ public class Main {
 		for (int i = 0; i < 100000; i++) {
 			System.out.println("---- Starting simulation n° " + i + " ----");
 			simulation();
-			System.out.print("---- Simulation ended ----\nWaiting [");
+			System.out.print("---- Simulation ended ----\nWaiting generation [");
 			for (int j = 0; j < 20; j++) {
 				System.out.print("|");
+				
 				try {
 					Thread.sleep(50 - i < 0 ? 0 : 50 - i);
 				} catch (InterruptedException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
+					System.exit(-1);
 				}
 			}
-			System.out.println("]");
+			
+			System.out.println("]\nPress a key to continue");
+			
+			try {
+				System.in.read();
+			} catch (IOException e) {}
 		}
 	}
 
-	private static boolean simulation() {
+	private static void simulation() {
 		manager = new GameManager();
 
 		putRandomWalls(20);
 		int[] coord = getRandomCoord();
-		int destination = sr.nextBoolean() ? GameCostants.BLUE_WIN_Y : GameCostants.RED_WIN_Y;
 		manager.setPlayerCoords(getRandomPlayer(), coord);
-		PathSearcher ps = manager.board.buildPathSearcher();
-		ps.verbose = true;
-		ps.setDestinationY(destination);
-
 		System.out.println(manager.board);
-		boolean ava = ps.compute(coord[0], coord[1]);
-		System.out.println(ava ? "FOUND" : "NOT FOUND");
-		return ava;
+		PlayerEngine pe = new PlayerEngine(manager, getRandomPlayer());
+		pe.debug();
+		int action[] = pe.getBestAction();
+		
+		System.out.println("Best action is: " + Arrays.toString(action));
 	}
 
 	private static int[] getRandomCoord() {
