@@ -1,4 +1,4 @@
-package gj.quoridor.player.stupid.core.engine.tree.viewer;
+package gj.quoridor.player.silvestri.core.engine.tree.viewer;
 
 import java.awt.BorderLayout;
 
@@ -7,7 +7,7 @@ import javax.swing.JLabel;
 import javax.swing.JScrollPane;
 import javax.swing.JTree;
 
-import gj.quoridor.player.stupid.core.engine.tree.GameTree;
+import gj.quoridor.player.silvestri.core.engine.tree.GameTree;
 
 public class TreeViewer extends JFrame {
 

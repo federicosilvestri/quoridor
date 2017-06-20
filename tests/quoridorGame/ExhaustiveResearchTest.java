@@ -11,8 +11,8 @@ import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameters;
 
-import gj.quoridor.player.stupid.core.GameManager;
-import gj.quoridor.player.stupid.core.engine.ExhaustiveResearch;
+import gj.quoridor.player.silvestri.core.GameManager;
+import gj.quoridor.player.silvestri.core.engine.ExhaustiveResearch;
 
 
 

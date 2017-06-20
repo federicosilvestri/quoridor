@@ -1,14 +1,14 @@
-package gj.quoridor.player.stupid.core;
+package gj.quoridor.player.silvestri.core;
 
 import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 
-import gj.quoridor.player.stupid.exceptions.BadMoveException;
-import gj.quoridor.player.stupid.exceptions.InvalidDirection;
-import gj.quoridor.player.stupid.exceptions.OutOfStockWallException;
-import gj.quoridor.player.stupid.exceptions.PassedWallException;
-import gj.quoridor.player.stupid.exceptions.WallUnavailableException;
+import gj.quoridor.player.silvestri.exceptions.BadMoveException;
+import gj.quoridor.player.silvestri.exceptions.InvalidDirection;
+import gj.quoridor.player.silvestri.exceptions.OutOfStockWallException;
+import gj.quoridor.player.silvestri.exceptions.PassedWallException;
+import gj.quoridor.player.silvestri.exceptions.WallUnavailableException;
 
 /**
  * Game Manager Object.

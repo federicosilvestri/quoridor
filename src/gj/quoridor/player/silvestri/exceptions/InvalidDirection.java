@@ -1,6 +1,6 @@
-package gj.quoridor.player.stupid.exceptions;
+package gj.quoridor.player.silvestri.exceptions;
 
-import gj.quoridor.player.stupid.core.GameManager;
+import gj.quoridor.player.silvestri.core.GameManager;
 
 public class InvalidDirection extends RuntimeException {
 

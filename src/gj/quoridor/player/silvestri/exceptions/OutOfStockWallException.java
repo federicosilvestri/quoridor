@@ -1,4 +1,4 @@
-package gj.quoridor.player.stupid.exceptions;
+package gj.quoridor.player.silvestri.exceptions;
 
 public class OutOfStockWallException extends RuntimeException {
 

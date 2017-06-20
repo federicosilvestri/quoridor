@@ -1,4 +1,4 @@
-package gj.quoridor.player.stupid.core.engine;
+package gj.quoridor.player.silvestri.core.engine;
 
 /**
  * This class is a separate thread that notify engine a player worker finish.

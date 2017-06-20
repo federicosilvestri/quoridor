@@ -6,7 +6,7 @@ import java.util.Arrays;
 import org.junit.Before;
 import org.junit.Test;
 
-import gj.quoridor.player.stupid.core.GameManager;;
+import gj.quoridor.player.silvestri.core.GameManager;;
 
 public class GameManagerTest {
 

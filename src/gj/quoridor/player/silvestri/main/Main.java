@@ -1,13 +1,13 @@
-package main;
+package gj.quoridor.player.silvestri.main;
 
 import java.io.IOException;
 import java.security.SecureRandom;
 import java.util.Arrays;
 import java.util.List;
 
-import gj.quoridor.player.stupid.core.GameManager;
-import gj.quoridor.player.stupid.core.engine.ExhaustiveResearch;
-import gj.quoridor.player.stupid.core.engine.PlayerEngine;
+import gj.quoridor.player.silvestri.core.GameManager;
+import gj.quoridor.player.silvestri.core.engine.ExhaustiveResearch;
+import gj.quoridor.player.silvestri.core.engine.PlayerEngine;
 
 public class Main {
 	private static SecureRandom sr;
@@ -18,7 +18,7 @@ public class Main {
 		manager = new GameManager();
 
 		putRandomWalls(20);
-
+		manager.setPlayerCoords(GameManager.BLUE, new int[] { 8, 4 });
 		int player = switchPlayer(GameManager.RED);
 		int i = 0;
 		while (!manager.isFinished()) {
@@ -69,7 +69,7 @@ public class Main {
 				System.out.println("NOT CORRECT");
 				System.out.println("Press a key to execute move");
 			}
-			
+
 			try {
 				System.in.read();
 			} catch (IOException e1) {
@@ -78,10 +78,10 @@ public class Main {
 			}
 
 			manager.play(player, action[0], action[1]);
-			
+
 			player = switchPlayer(player);
 			pe = null;
-			
+
 			System.gc();
 			Thread.yield();
 		}

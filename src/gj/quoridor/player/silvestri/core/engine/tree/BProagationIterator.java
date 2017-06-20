@@ -1,11 +1,11 @@
-package gj.quoridor.player.stupid.core.engine.tree;
+package gj.quoridor.player.silvestri.core.engine.tree;
 
 import java.util.Iterator;
 import java.util.NoSuchElementException;
 
 /**
- * This class is an iterator that iterates nodes until it reach root-1 node. It
- * allow system to visit all nodes of path for back-propagation purposes.
+ * This class is an iterator that iterates nodes until it reaches root-1 node. It
+ * allows system to visit all nodes of path for back-propagation purposes.
  * 
  * @author federicosilvestri
  * @version 2.0
@@ -24,7 +24,7 @@ class BProagationIterator implements Iterator<Node> {
 
 	@Override
 	public boolean hasNext() {
-		return cursor.root;
+		return (!cursor.root);
 	}
 
 	@Override

@@ -1,4 +1,4 @@
-package gj.quoridor.player.stupid.core;
+package gj.quoridor.player.silvestri.core;
 
 import java.util.ArrayList;
 import java.util.List;

@@ -1,4 +1,4 @@
-package gj.quoridor.player.stupid.core.engine;
+package gj.quoridor.player.silvestri.core.engine;
 
 import java.security.SecureRandom;
 import java.util.LinkedList;
@@ -7,11 +7,11 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
-import gj.quoridor.player.stupid.core.GameManager;
-import gj.quoridor.player.stupid.core.engine.tree.GameTree;
-import gj.quoridor.player.stupid.core.engine.tree.Node;
-import gj.quoridor.player.stupid.core.engine.tree.NodeWeightComparator;
-import gj.quoridor.player.stupid.core.engine.tree.viewer.TreeViewer;
+import gj.quoridor.player.silvestri.core.GameManager;
+import gj.quoridor.player.silvestri.core.engine.tree.GameTree;
+import gj.quoridor.player.silvestri.core.engine.tree.Node;
+import gj.quoridor.player.silvestri.core.engine.tree.NodeWeightComparator;
+import gj.quoridor.player.silvestri.core.engine.tree.viewer.TreeViewer;
 
 public class PlayerEngine extends Thread {
 
@@ -23,12 +23,12 @@ public class PlayerEngine extends Thread {
 	/**
 	 * Default Max computation time expressed in seconds.
 	 */
-	private final static int DEFAULT_MAX_COMPUTATION_TIME = 5;
+	private final static int DEFAULT_MAX_COMPUTATION_TIME = 500;
 
 	/**
 	 * Default Max computation depth.
 	 */
-	private final static int DEFAULT_MAX_COMPUTATION_DEPTH = 3;
+	private final static int DEFAULT_MAX_COMPUTATION_DEPTH = 7;
 
 	/**
 	 * Game Manager
@@ -129,7 +129,7 @@ public class PlayerEngine extends Thread {
 
 			viewer.repaint();
 		}
-		System.out.println("Computantion ended");
+		System.out.println("Computation ended");
 	}
 
 	/**
@@ -150,8 +150,9 @@ public class PlayerEngine extends Thread {
 		// termination
 		try {
 			this.join();
-		} catch (InterruptedException e) {
 			finished = true;
+		} catch (InterruptedException e) {
+			
 		}
 	}
 
@@ -252,7 +253,7 @@ public class PlayerEngine extends Thread {
 		 */
 		try {
 			// Wait max computation time
-			service.awaitTermination(maxComputationTime, TimeUnit.SECONDS);
+			service.awaitTermination(maxComputationTime, TimeUnit.MILLISECONDS);
 		} catch (InterruptedException e) {
 			if (!finished) {
 				System.err.println(
@@ -261,7 +262,7 @@ public class PlayerEngine extends Thread {
 
 			}
 		}
-
+		
 		// Close service
 		List<Runnable> futures = service.shutdownNow();
 

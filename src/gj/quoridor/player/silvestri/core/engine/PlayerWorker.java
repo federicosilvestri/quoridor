@@ -1,17 +1,17 @@
-package gj.quoridor.player.stupid.core.engine;
+package gj.quoridor.player.silvestri.core.engine;
 
 import java.util.Iterator;
 import java.util.List;
 
-import gj.quoridor.player.stupid.core.GameManager;
-import gj.quoridor.player.stupid.core.engine.tree.Node;
+import gj.quoridor.player.silvestri.core.GameManager;
+import gj.quoridor.player.silvestri.core.engine.tree.Node;
 
 public class PlayerWorker implements Runnable {
 
 	/**
 	 * Depth to reach before recursion.
 	 */
-	public final static int THREAD_FORK_DEPTH = 3;
+	public final static int THREAD_FORK_DEPTH = 8;
 
 	/**
 	 * Depth of current thread
@@ -53,14 +53,14 @@ public class PlayerWorker implements Runnable {
 
 	}
 
-	private boolean checkStop(Node node, GameManager manager, int depth) {
+	private boolean checkStop(Node node, GameManager manager, List<int[]> actions, int depth) {
 		if (depth > engine.maxDepth || stop) {
 			/*
 			 * Here we need to setup a back propagation weight but weight must
 			 * be calculated in base of distance to victory backPropagate(node,
 			 * -2);
 			 */
-			backPropagate(node, 0.1f);
+			backPropagate(node, 0.0f);
 			return true;
 		}
 
@@ -80,30 +80,30 @@ public class PlayerWorker implements Runnable {
 			/*
 			 * if nextNode is previous node, not good
 			 */
-			
-			// Check with exhaustive research
-			// ExhaustiveResearch er = new ExhaustiveResearch(engine.player, manager);
-			//check moves
+			// get first action
+			if (actions.isEmpty()) {
+				backPropagate(node, -0.4f);
+				return true;
+			}
 		}
 
 		return false;
 	}
 	
 	private void computeActions(Node node, GameManager manager, int depth) {
-		if (checkStop(node, manager, depth)) {
-			return;
-		}
-
 		// Search all possible moves
 		ExhaustiveResearch er = new ExhaustiveResearch(engine.player, manager);
+		List<int[]> actions = er.getActions();
+		
+		if (checkStop(node, manager, actions, depth)) {
+			return;
+		}
 		
 		if (depth < THREAD_FORK_DEPTH) {
 			// scale
-			fork(node, manager, er, depth);
+			fork(node, manager, actions, depth);
 		} else {
 			// Here we are adding all sons of first child
-			List<int[]> actions = er.getActions();
-			
 			for (int[] action : actions) {
 				// copy Game Manager
 				GameManager gm = manager.getSimulation();
@@ -118,10 +118,7 @@ public class PlayerWorker implements Runnable {
 		}
 	}
 
-	private void fork(Node node, GameManager manager, ExhaustiveResearch er, int depth) {
-		// Get all actions (or children) of this leaf
-		List<int[]> actions = er.getActions();
-
+	private void fork(Node node, GameManager manager, List<int[]> actions, int depth) {
 		// Create a worker for each sub-tree
 		for (int[] action : actions) {
 			GameManager gm = manager.getSimulation();
@@ -134,16 +131,13 @@ public class PlayerWorker implements Runnable {
 	}
 
 	// check if synch or not
-	private void backPropagate(Node node, float weight) {		
+	private void backPropagate(Node node, float weight) {
 		node.setWeigth(weight);
 		Iterator<Node> bpi = engine.gameTree.getToRootIterator(node);
 
-		float accumulateWeight = weight;
-		
 		while (bpi.hasNext()) {
 			Node n = bpi.next();
-			accumulateWeight += n.getWeight();
-			n.setWeigth(accumulateWeight);
+			n.setWeigth(weight);
 		}
 	}
 

@@ -12,8 +12,8 @@ import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameters;
 
-import gj.quoridor.player.stupid.core.Board;
-import gj.quoridor.player.stupid.core.GameManager;
+import gj.quoridor.player.silvestri.core.Board;
+import gj.quoridor.player.silvestri.core.GameManager;
 
 @RunWith(Parameterized.class)
 public class BoardTest {

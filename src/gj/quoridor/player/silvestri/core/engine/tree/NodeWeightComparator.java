@@ -1,4 +1,4 @@
-package gj.quoridor.player.stupid.core.engine.tree;
+package gj.quoridor.player.silvestri.core.engine.tree;
 
 import java.util.Comparator;
 

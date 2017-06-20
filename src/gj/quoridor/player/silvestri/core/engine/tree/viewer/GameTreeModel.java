@@ -1,11 +1,11 @@
-package gj.quoridor.player.stupid.core.engine.tree.viewer;
+package gj.quoridor.player.silvestri.core.engine.tree.viewer;
 
 import javax.swing.event.TreeModelListener;
 import javax.swing.tree.TreeModel;
 import javax.swing.tree.TreePath;
 
-import gj.quoridor.player.stupid.core.engine.tree.GameTree;
-import gj.quoridor.player.stupid.core.engine.tree.Node;
+import gj.quoridor.player.silvestri.core.engine.tree.GameTree;
+import gj.quoridor.player.silvestri.core.engine.tree.Node;
 
 public class GameTreeModel implements TreeModel {
 
