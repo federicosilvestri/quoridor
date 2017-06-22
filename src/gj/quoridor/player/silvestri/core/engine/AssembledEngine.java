@@ -100,8 +100,8 @@ public class AssembledEngine {
 		PathSearcher ops = new PathSearcher(winningY, manager.board);
 		int[] ourCoords = manager.getPlayerCoords(player);
 		List<int[]> ourPath = ops.shortestPath(ourCoords[0], ourCoords[1]);
-
-		if (ourPath.size() >= adversaryPath.size()) {
+		
+		if (ourPath.size() - 2 < adversaryPath.size()-1) {
 			return computeMove();
 		}
 

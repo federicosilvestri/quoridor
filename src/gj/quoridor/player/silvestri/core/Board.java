@@ -318,6 +318,14 @@ public class Board {
 			coords[0] = (start[0] + end[0]) / 2;
 		}
 
+		if (coords[1] == matrix.length - 1) {
+			coords[1] -= 2;
+		}
+
+		if (coords[0] == matrix.length - 1) {
+			coords[0] -= 1;
+		}
+
 		int wallIndex = getWallIndex(coords);
 
 		return wallIndex;

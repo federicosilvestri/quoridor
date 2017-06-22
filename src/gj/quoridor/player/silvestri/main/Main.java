@@ -5,6 +5,7 @@ import java.security.SecureRandom;
 import java.util.Arrays;
 import java.util.List;
 
+import gj.quoridor.engine.QuoridorGUI;
 import gj.quoridor.player.silvestri.core.GameManager;
 import gj.quoridor.player.silvestri.core.PathSearcher;
 import gj.quoridor.player.silvestri.core.engine.ExhaustiveResearch;
@@ -13,23 +14,40 @@ import gj.quoridor.player.silvestri.core.engine.PlayerEngine;
 public class Main {
 	private static SecureRandom sr;
 	public static GameManager manager;
-	
+
 	public static void main(String args[]) {
-		sr = new SecureRandom();
 		manager = new GameManager();
 
-		putRandomWalls(20);
-		manager.setPlayerCoords(GameManager.BLUE, new int[] { 8, 4 });
+		manager.play(GameManager.RED, GameManager.PUT_WALL, 114);
+		manager.play(GameManager.RED, GameManager.PUT_WALL, 107);
+		manager.play(GameManager.RED, GameManager.PUT_WALL, 109);
+		manager.play(GameManager.RED, GameManager.PUT_WALL, 124);
+		manager.play(GameManager.RED, GameManager.PUT_WALL, 126);
+		manager.play(GameManager.BLUE, GameManager.PUT_WALL, 102);
+		manager.play(GameManager.BLUE, GameManager.PUT_WALL, 47);
+		manager.play(GameManager.BLUE, GameManager.PUT_WALL, 45);
+		manager.play(GameManager.BLUE, GameManager.PUT_WALL, 8);
+		manager.play(GameManager.BLUE, GameManager.PUT_WALL, 10);
+		manager.play(GameManager.BLUE, GameManager.PUT_WALL, 12);
+		manager.play(GameManager.BLUE, GameManager.PUT_WALL, 14);
+
+		manager.setPlayerCoords(GameManager.BLUE, new int[] { 6, 14 });
+
 		System.out.println(manager.board);
-		
 		PathSearcher ps = new PathSearcher(0, manager.board);
-		List<int[]> a = ps.shortestPath(8, 4);
+		
+		int index = manager.board.getWallIndexByPath(new int[] {16, 0}, new int[] {16, 2});
+		System.out.println("WallIndex = " + index);
+		
+		
+		List<int[]> a = ps.shortestPath(6, 14);
 		
 		for (int[] b : a) {
 			System.out.print(Arrays.toString(b) + " ");
 		}
+
 	}
-	
+
 	public static void ops(String args[]) {
 		sr = new SecureRandom();
 		manager = new GameManager();
