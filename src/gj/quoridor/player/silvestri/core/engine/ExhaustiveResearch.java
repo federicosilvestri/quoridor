@@ -39,13 +39,13 @@ public class ExhaustiveResearch {
 		List<int[]> actions = new ArrayList<>();
 
 		// Move actions
-		ArrayList<Integer> moves = computeMoves();
+		ArrayList<Integer> moves = getMoves();
 		for (int move : moves) {
 			actions.add(new int[] { GameManager.MOVE, move });
 		}
 
 		// Put-wall action
-		ArrayList<Integer> walls = computeWalls();
+		ArrayList<Integer> walls = getWalls();
 		for (int wallIndex : walls) {
 			actions.add(new int[] { GameManager.PUT_WALL, wallIndex });
 		}
@@ -53,7 +53,7 @@ public class ExhaustiveResearch {
 		return actions;
 	}
 
-	private ArrayList<Integer> computeMoves() {
+	public ArrayList<Integer> getMoves() {
 		ArrayList<Integer> moves = new ArrayList<>();
 
 		// create all 4 moves
@@ -70,7 +70,7 @@ public class ExhaustiveResearch {
 		return moves;
 	}
 
-	private ArrayList<Integer> computeWalls() {
+	public ArrayList<Integer> getWalls() {
 		ArrayList<Integer> walls = new ArrayList<>();
 
 		if (!gameManager.areWallsAvailable(player)) {

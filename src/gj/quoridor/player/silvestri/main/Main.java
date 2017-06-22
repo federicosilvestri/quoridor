@@ -6,14 +6,31 @@ import java.util.Arrays;
 import java.util.List;
 
 import gj.quoridor.player.silvestri.core.GameManager;
+import gj.quoridor.player.silvestri.core.PathSearcher;
 import gj.quoridor.player.silvestri.core.engine.ExhaustiveResearch;
 import gj.quoridor.player.silvestri.core.engine.PlayerEngine;
 
 public class Main {
 	private static SecureRandom sr;
 	public static GameManager manager;
-
+	
 	public static void main(String args[]) {
+		sr = new SecureRandom();
+		manager = new GameManager();
+
+		putRandomWalls(20);
+		manager.setPlayerCoords(GameManager.BLUE, new int[] { 8, 4 });
+		System.out.println(manager.board);
+		
+		PathSearcher ps = new PathSearcher(0, manager.board);
+		List<int[]> a = ps.shortestPath(8, 4);
+		
+		for (int[] b : a) {
+			System.out.print(Arrays.toString(b) + " ");
+		}
+	}
+	
+	public static void ops(String args[]) {
 		sr = new SecureRandom();
 		manager = new GameManager();
 

@@ -8,6 +8,11 @@ public class GameTree {
 	 * ROOT Node instance.
 	 */
 	public static final Node DEFAULT_ROOT = new Node(null, true);
+
+	/**
+	 * Size of tree
+	 */
+	private int size;
 	
 	/**
 	 * Root of tree
@@ -19,6 +24,7 @@ public class GameTree {
 	 */
 	public GameTree() {
 		root = DEFAULT_ROOT;
+		size = 0;
 	}
 
 	/**
@@ -33,13 +39,15 @@ public class GameTree {
 		Node node = new Node(action);
 		node.parent = parent;
 		parent.childs.add(node);
-
+		size += 1;
 		return node;
 	}
 
 	/**
-	 * Get iterator that iterates until it reaches root of tree. 
-	 * @param n start note
+	 * Get iterator that iterates until it reaches root of tree.
+	 * 
+	 * @param n
+	 *            start note
 	 * @return Iterator
 	 */
 	public Iterator<Node> getToRootIterator(Node n) {
@@ -48,6 +56,7 @@ public class GameTree {
 
 	/**
 	 * Get standard BFS iterator.
+	 * 
 	 * @return Iterator
 	 */
 	public Iterator<Node> getIterator() {
@@ -61,6 +70,15 @@ public class GameTree {
 	 */
 	public Node getRoot() {
 		return root;
+	}
+
+	/**
+	 * Get number of nodes.
+	 * 
+	 * @return number of nodes contained
+	 */
+	public int getChildsNumber() {
+		return size;
 	}
 
 	@Override

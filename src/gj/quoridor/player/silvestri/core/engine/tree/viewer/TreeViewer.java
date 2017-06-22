@@ -29,7 +29,7 @@ public class TreeViewer extends JFrame {
 		setSize(1000, 1000);
 		setTitle("Montecarlo Tree Viewer");
 		setResizable(true);
-		JLabel j = new JLabel("JTree");
+		JLabel j = new JLabel("Generated Game Tree, size = " + gt.getChildsNumber());
 		add(j, BorderLayout.NORTH);
 		addTree();
 		setDefaultCloseOperation(DISPOSE_ON_CLOSE);

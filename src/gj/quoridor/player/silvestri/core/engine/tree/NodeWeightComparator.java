@@ -6,12 +6,9 @@ public class NodeWeightComparator implements Comparator<Node> {
 
 	@Override
 	public int compare(Node o1, Node o2) {
-		float difference = o1.getWeight() - o2.getWeight();
+		float difference = o2.getWeight() - o1.getWeight();
 		int diff = Math.round(difference);
 		
 		return diff;
 	}
-
-	
-
 }

@@ -28,7 +28,7 @@ public class PlayerEngine extends Thread {
 	/**
 	 * Default Max computation depth.
 	 */
-	private final static int DEFAULT_MAX_COMPUTATION_DEPTH = 7;
+	private final static int DEFAULT_MAX_COMPUTATION_DEPTH = 18;
 
 	/**
 	 * Game Manager
@@ -175,11 +175,14 @@ public class PlayerEngine extends Thread {
 		}
 	}
 
-	void distribute(PlayerWorker playerWorker) {
+	synchronized void distribute(PlayerWorker playerWorker) {
 		if (service == null) {
 			throw new RuntimeException("Executor Service is not set up!");
 		}
-		service.submit(playerWorker);
+		
+		if (!service.isShutdown()) {
+			service.submit(playerWorker);
+		}
 	}
 
 	synchronized void fireFinished(PlayerWorker playerWorker) {

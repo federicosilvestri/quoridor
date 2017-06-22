@@ -3,12 +3,14 @@ package gj.quoridor.player.silvestri.core.engine.tree;
 import java.util.Arrays;
 import java.util.LinkedList;
 
+import gj.quoridor.player.silvestri.core.GameManager;
+
 public class Node {
 
 	/**
 	 * True if this node is the root of tree.
 	 */
-	final boolean root;
+	public final boolean root;
 
 	/**
 	 * Neighbors.
@@ -81,6 +83,16 @@ public class Node {
 	}
 
 	/**
+	 * Add weight of node.
+	 * 
+	 * @param weigth
+	 *            integer value of weight
+	 */
+	public void addWeigth(float incr) {
+		this.weight += incr;
+	}
+
+	/**
 	 * Get action to reach this node.
 	 * 
 	 * @return array of action
@@ -96,7 +108,26 @@ public class Node {
 		if (root) {
 			s += "Root Node";
 		} else {
-			s += "Action: " + Arrays.toString(action) + ", w=" + weight;
+			if (action[0] == GameManager.PUT_WALL) {
+				s += "Action: [PUT_WALL," + action[1] + "], w=" + weight;
+			} else {
+				String a = "";
+				switch (action[1]) {
+				case GameManager.LEFT:
+					a = "LEFT";
+					break;
+				case GameManager.RIGHT:
+					a = "RIGHT";
+					break;
+				case GameManager.FORWARD:
+					a = "FORWARD";
+					break;
+				case GameManager.BACK:
+					a = "BACK";
+				}
+				
+				s += "Action: [MOVE," + a + "], w=" + weight;
+			}
 		}
 
 		return s;

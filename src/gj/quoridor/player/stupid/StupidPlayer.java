@@ -4,8 +4,9 @@ import java.security.SecureRandom;
 import java.util.List;
 
 import gj.quoridor.player.Player;
-import gj.quoridor.player.stupid.core.GameManager;
-import gj.quoridor.player.stupid.core.engine.ExhaustiveResearch;
+import gj.quoridor.player.silvestri.core.GameManager;
+import gj.quoridor.player.silvestri.core.engine.ExhaustiveResearch;
+
 
 public class StupidPlayer implements Player {
 	private int player;

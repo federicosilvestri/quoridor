@@ -87,6 +87,28 @@ public class GameManager {
 	public final Board board;
 
 	/**
+	 * Get invert action
+	 * 
+	 * @param action
+	 *            action to invert, only if this is a move
+	 * @return reverted action
+	 */
+	public static int getInvertedMove(int direction) {
+		switch (direction) {
+		case LEFT:
+			return RIGHT;
+		case RIGHT:
+			return LEFT;
+		case FORWARD:
+			return BACK;
+		case BACK:
+			return FORWARD;
+		default:
+			throw new RuntimeException("Invalid direction is passed to move reverter!");
+		}
+	}
+
+	/**
 	 * Create a new game manager.
 	 */
 	public GameManager() {
@@ -397,14 +419,14 @@ public class GameManager {
 	public GameManager getSimulation() {
 		return new GameManager(playerCoords, wallAvailability, wallStock, moveAvailability, board.copy());
 	}
-	
+
 	@Override
 	public String toString() {
 		String s = "-- Game Manager " + hashCode() + "--";
 		s += "\n-Coordinates:";
 		s += "\n\tRED: " + Arrays.toString(playerCoords[RED]);
 		s += "\n\tBLUE: " + Arrays.toString(playerCoords[BLUE]);
-		
+
 		s += "\n-Walls available:";
 		s += "\n\tRED: " + wallAvailability[RED];
 		s += "\n\tBLUE: " + wallAvailability[BLUE];

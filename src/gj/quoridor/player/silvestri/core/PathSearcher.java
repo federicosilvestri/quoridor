@@ -1,7 +1,10 @@
 package gj.quoridor.player.silvestri.core;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Iterator;
 import java.util.LinkedList;
+import java.util.List;
 
 /**
  * This object is an implementation of researched algorithm to find if path is
@@ -56,7 +59,7 @@ public class PathSearcher {
 
 	private LinkedList<Integer>[] generateAdjList() {
 		LinkedList<Integer>[] adj = new LinkedList[GameCostants.CELL_NUMBER];
-		
+
 		for (int i = 0; i < adj.length; i++) {
 			LinkedList<Integer> a = new LinkedList<>();
 			adj[i] = a;
@@ -139,6 +142,84 @@ public class PathSearcher {
 		}
 
 		return false;
+	}
+
+	private int minDistance(int[] dist, boolean[] v) {
+		int x = Integer.MAX_VALUE;
+		int y = 0;
+
+		for (int i = 0; i < dist.length; i++) {
+			if (!v[i] && dist[i] < x) {
+				y = i;
+				x = dist[i];
+			}
+		}
+
+		return y;
+	}
+
+	private int[] dijkstra(LinkedList<Integer>[] graph, int source) {
+		int[] dist = new int[graph.length];
+		int[] pred = new int[graph.length];
+		boolean[] visited = new boolean[graph.length];
+
+		// Initialize distances to max value
+		for (int i = 0; i < dist.length; i++) {
+			dist[i] = Integer.MAX_VALUE;
+		}
+		dist[source] = 0;
+
+		for (int i = 0; i < dist.length; i++) {
+			int next = minDistance(dist, visited);
+			visited[next] = true;
+
+			List<Integer> n = graph[next];
+			for (int j = 0; j < n.size(); j++) {
+				int v = n.get(j);
+				int d = dist[next] + 1;
+				if (dist[v] > d) {
+					dist[v] = d;
+					pred[v] = next;
+				}
+			}
+		}
+
+		return pred;
+	}
+
+	public List<int[]> shortestPath(int startX, int startY) {
+		LinkedList<Integer>[] adjList = generateAdjList();
+		int startIndex = board.getCellIndex(startX, startY);
+
+		// Minimum path
+		ArrayList<Integer> path = null;
+		
+		// Create list of nodes and compares shortest path
+		for (int i = 0; i < board.getMatrix().length; i += 2) {
+			ArrayList<Integer> current = new ArrayList<Integer>();
+			
+			int endIndex = board.getCellIndex(i, destinationY);
+			int[] pred = dijkstra(adjList, startIndex);
+			int x = endIndex;
+			while (x != startIndex) {
+				current.add(0, x);
+				x = pred[x];
+			}
+			
+			current.add(0, x);
+			
+			if (path == null || current.size() < path.size()) {
+				path = current;
+			}
+		}
+
+		// Convert list of cell indexes to coordinates list
+		ArrayList<int[]> pathCoords = new ArrayList<int[]>();
+		for (Integer index : path) {
+			pathCoords.add(board.getCellCoord(index));
+		}
+
+		return pathCoords;
 	}
 
 }
