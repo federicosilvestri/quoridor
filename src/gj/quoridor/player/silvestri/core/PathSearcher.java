@@ -1,7 +1,6 @@
 package gj.quoridor.player.silvestri.core;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
@@ -144,6 +143,36 @@ public class PathSearcher {
 		return false;
 	}
 
+	private boolean isReachable(int start, int endX, int endY, LinkedList<Integer>[] adj) {
+		boolean visited[] = new boolean[GameCostants.CELL_NUMBER];
+		LinkedList<Integer> queue = new LinkedList<Integer>();
+
+		visited[start] = true;
+		queue.add(start);
+
+		Iterator<Integer> nbIterator;
+		while (!queue.isEmpty()) {
+			start = queue.poll();
+			int n;
+			nbIterator = adj[start].listIterator();
+
+			while (nbIterator.hasNext()) {
+				n = nbIterator.next();
+
+				if (n == board.getCellIndex(endX, endY)) {
+					return true;
+				}
+
+				if (!visited[n]) {
+					visited[n] = true;
+					queue.add(n);
+				}
+			}
+		}
+
+		return false;
+	}
+
 	private int minDistance(int[] dist, boolean[] v) {
 		int x = Integer.MAX_VALUE;
 		int y = 0;
@@ -167,6 +196,7 @@ public class PathSearcher {
 		for (int i = 0; i < dist.length; i++) {
 			dist[i] = Integer.MAX_VALUE;
 		}
+
 		dist[source] = 0;
 
 		for (int i = 0; i < dist.length; i++) {
@@ -187,30 +217,46 @@ public class PathSearcher {
 		return pred;
 	}
 
+	/**
+	 * Calculate shortest path from source position to winning Y.
+	 * 
+	 * @param startX
+	 *            x of start
+	 * @param startY
+	 *            y of start
+	 * @return a list of coordinates to reach goal
+	 */
 	public List<int[]> shortestPath(int startX, int startY) {
 		LinkedList<Integer>[] adjList = generateAdjList();
 		int startIndex = board.getCellIndex(startX, startY);
 
 		// Minimum path
 		ArrayList<Integer> path = null;
-		
+
 		// Create list of nodes and compares shortest path
 		for (int i = 0; i < board.getMatrix().length; i += 2) {
+			// Know first if is reachable
+			if (!isReachable(startIndex, i, destinationY, adjList)) {
+				continue;
+			}
+
 			ArrayList<Integer> current = new ArrayList<Integer>();
-			
+
 			int endIndex = board.getCellIndex(i, destinationY);
 			int[] pred = dijkstra(adjList, startIndex);
+
 			int x = endIndex;
 			while (x != startIndex) {
 				current.add(0, x);
 				x = pred[x];
 			}
-			
+
 			current.add(0, x);
-			
+
 			if (path == null || current.size() < path.size()) {
 				path = current;
 			}
+
 		}
 
 		// Convert list of cell indexes to coordinates list

@@ -1,4 +1,4 @@
-package gj.quoridor.player.stupid;
+package gj.quoridor.player.silvestri;
 
 import java.security.SecureRandom;
 import java.util.List;

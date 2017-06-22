@@ -168,7 +168,7 @@ public class Board {
 
 	private Board(int[][] matrix2) {
 		matrix = new int[matrix2.length][matrix2[0].length];
-		
+
 		for (int i = 0; i < matrix2.length; i++) {
 			for (int j = 0; j < matrix2[i].length; j++) {
 				matrix[i][j] = matrix2[i][j];
@@ -290,6 +290,48 @@ public class Board {
 		}
 
 		return coords;
+	}
+
+	/**
+	 * Get wall index by path.
+	 * 
+	 * @param start
+	 *            start cell
+	 * @param end
+	 *            end cell
+	 * @return index of wall
+	 */
+	public int getWallIndexByPath(int[] start, int end[]) {
+		// First we need to know what wall is affected on this path
+		int delta = end[0] - start[0];
+		int coords[] = new int[2];
+		coords[0] = start[0];
+		coords[1] = start[1];
+
+		if (delta == 0) {
+			// Y move
+			coords[1] = (start[1] + end[1]) / 2; // if moves are 2-based,
+													// number between A and B
+													// exists always in N|.
+		} else {
+			// X Move
+			coords[0] = (start[0] + end[0]) / 2;
+		}
+
+		int wallIndex = getWallIndex(coords);
+
+		return wallIndex;
+	}
+
+	/**
+	 * Get wall index from coordinates.
+	 * 
+	 * @param coords
+	 *            coordinates of wall
+	 * @return index of wall
+	 */
+	public int getWallIndex(int coords[]) {
+		return coords[1] * (matrix.length - 1) / 2 + coords[0] / 2;
 	}
 
 	private boolean checkWallCoords(int coord[]) {
@@ -481,7 +523,7 @@ public class Board {
 	public PathSearcher buildPathSearcher() {
 		return new PathSearcher(GameCostants.BLUE_WIN_Y, this);
 	}
-	
+
 	public Board copy() {
 		return new Board(matrix);
 	}
@@ -489,7 +531,7 @@ public class Board {
 	int[][] getMatrix() {
 		return matrix;
 	}
-	
+
 	@Override
 	public String toString() {
 		String s = "";

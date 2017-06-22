@@ -1,18 +1,21 @@
-package gj.quoridor.player.assembled;
+package gj.quoridor.player.silvestri;
+
 
 import gj.quoridor.player.Player;
 import gj.quoridor.player.silvestri.core.GameManager;
-import gj.quoridor.player.silvestri.core.engine.AssembledEngine;
+import gj.quoridor.player.silvestri.core.engine.PlayerEngine;
 
-public class AssembledPlayer implements Player {
-	private AssembledEngine ae;
+public class BruteForcePlayer implements Player {
 	private int player;
 	private int opponent;
 	private GameManager gameManager;
 
 	@Override
 	public int[] move() {
-		int action[] = ae.computeAction();
+		PlayerEngine pe = new PlayerEngine(gameManager, player);
+		pe.startComputation();
+//		pe.debug();
+		int[] action = pe.getBestAction();
 		gameManager.play(player, action[0], action[1]);
 		return action;
 	}
@@ -22,7 +25,6 @@ public class AssembledPlayer implements Player {
 		player = isRed ? GameManager.RED : GameManager.BLUE;
 		opponent = isRed ? GameManager.BLUE : GameManager.RED;
 		gameManager = new GameManager();
-		ae = new AssembledEngine(gameManager, player);
 	}
 
 	@Override

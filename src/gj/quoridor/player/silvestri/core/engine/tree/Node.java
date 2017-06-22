@@ -1,6 +1,5 @@
 package gj.quoridor.player.silvestri.core.engine.tree;
 
-import java.util.Arrays;
 import java.util.LinkedList;
 
 import gj.quoridor.player.silvestri.core.GameManager;
