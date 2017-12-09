@@ -14,7 +14,7 @@ it.
 
 The computer player has a very simple strategy to reach the goal.
 It uses the BFS algorithm to calculate the shortest path
-to the winning cell. Really it uses Dijkstra, but the edges weight 
+to the winning cell. Really it uses Dijkstra, but the edge's weight 
 is constant, so we can simplify it using a simpler algorithm i.e. BFS.
 
 Algorithm is the following:
